@@ -77,12 +77,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Function to log in an existing user
-  async function login(userId: string, password: string) {
+  async function login(email: string, password: string) {
     try {
       // In Firebase, we need to use email for authentication
       // So we'll assume that userId is the email for simplicity
       // In a real app, you might need to fetch the email based on userId first
-      const userCredential = await signInWithEmailAndPassword(auth, userId, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
     } catch (error) {
       console.error("Error logging in:", error);
