@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, Camera, X } from 'lucide-react';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 interface ImageUploadProps {
   onImageUploaded: (image: File) => void;

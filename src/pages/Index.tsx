@@ -3,7 +3,7 @@ import { useState } from 'react';
 import ImageUpload from '@/components/ImageUpload';
 import SymptomsQuestionnaire, { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
 import ResultDisplay from '@/components/ResultDisplay';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 enum ScreenState {
   UPLOAD,
