@@ -20,7 +20,7 @@ import { AtSign, Key, LogIn, User as UserIcon } from "lucide-react";
 
 // Define the login form schema
 const loginSchema = z.object({
-  userId: z.string().min(1, "ID is required"),
+  email: z.string().min(1, "Email ID is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -35,7 +35,7 @@ const Login = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      userId: "",
+      email: "",
       password: "",
     },
   });
@@ -44,7 +44,7 @@ const Login = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      await login(data.userId, data.password);
+      await login(data.email, data.password);
       toast.success("Logged in successfully!");
       navigate("/");
     } catch (error) {
@@ -80,16 +80,16 @@ const Login = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="userId"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>User ID</FormLabel>
+                      <FormLabel>Email ID</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                           <Input
                             className="pl-10"
-                            placeholder="Enter your user ID"
+                            placeholder="Enter your Email ID"
                             {...field}
                           />
                         </div>
