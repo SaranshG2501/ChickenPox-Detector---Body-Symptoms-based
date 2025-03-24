@@ -3,6 +3,8 @@ import { useState } from 'react';
 import ImageUpload from '@/components/ImageUpload';
 import SymptomsQuestionnaire, { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
 import ResultDisplay from '@/components/ResultDisplay';
+import LogoutButton from '@/components/LogoutButton';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from "sonner";
 
 enum ScreenState {
@@ -12,6 +14,7 @@ enum ScreenState {
 }
 
 const Index = () => {
+  const { currentUser } = useAuth();
   const [currentScreen, setCurrentScreen] = useState<ScreenState>(ScreenState.UPLOAD);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -82,10 +85,18 @@ const Index = () => {
       <header className="w-full py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="glass px-6 py-4 rounded-2xl">
-            <h1 className="text-2xl sm:text-3xl font-medium text-center">
-              <span className="text-medical-700">Chicken Pox</span> Symptom Assessment
-            </h1>
-            <p className="mt-2 text-center text-gray-600">
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl sm:text-3xl font-medium">
+                <span className="text-medical-700">Chicken Pox</span> Symptom Assessment
+              </h1>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 hidden sm:inline">
+                  Welcome, {currentUser?.displayName || 'User'}
+                </span>
+                <LogoutButton />
+              </div>
+            </div>
+            <p className="mt-2 text-gray-600">
               Upload an image of the affected area and answer a few questions for a preliminary assessment
             </p>
           </div>
