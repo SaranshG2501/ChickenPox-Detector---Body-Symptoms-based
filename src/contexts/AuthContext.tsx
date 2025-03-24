@@ -25,7 +25,7 @@ interface AuthContextType {
   currentUser: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
-  login: (userId: string, password: string) => Promise<User>;
+  login: (email: string, password: string) => Promise<User>;
   signup: (name: string, userId: string, email: string, contactNo: string, post: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
 }
