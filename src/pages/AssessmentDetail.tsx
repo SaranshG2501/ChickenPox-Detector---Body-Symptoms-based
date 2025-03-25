@@ -1,15 +1,17 @@
+
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle, HelpCircle, ArrowLeft, Calendar, Printer } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAssessmentById } from '@/lib/firebase';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
 import { Timestamp } from 'firebase/firestore';
+import { AssessmentHeader } from '@/components/assessment/AssessmentHeader';
+import { AssessmentResultCard } from '@/components/assessment/AssessmentResultCard';
+import { QuestionnaireResponsesCard } from '@/components/assessment/QuestionnaireResponsesCard';
+import { DisclaimerCard } from '@/components/assessment/DisclaimerCard';
+import { AssessmentFooter } from '@/components/assessment/AssessmentFooter';
 
 interface AssessmentData {
   id: string;
@@ -69,37 +71,6 @@ const AssessmentDetail = () => {
     }
   };
 
-  const getLikelihoodInfo = (likelihood: 'high' | 'medium' | 'low' | 'unknown') => {
-    const styles = {
-      high: { 
-        bg: 'bg-red-50 border-red-200', 
-        badge: 'bg-red-500',
-        icon: <AlertCircle className="h-8 w-8 text-red-500" />,
-        title: "High Likelihood of Chicken Pox"
-      },
-      medium: { 
-        bg: 'bg-amber-50 border-amber-200', 
-        badge: 'bg-amber-500',
-        icon: <HelpCircle className="h-8 w-8 text-amber-500" />,
-        title: "Possible Chicken Pox"
-      },
-      low: { 
-        bg: 'bg-green-50 border-green-200', 
-        badge: 'bg-green-500',
-        icon: <CheckCircle className="h-8 w-8 text-green-500" />,
-        title: "Low Likelihood of Chicken Pox"
-      },
-      unknown: { 
-        bg: 'bg-blue-50 border-blue-200', 
-        badge: 'bg-blue-500',
-        icon: <HelpCircle className="h-8 w-8 text-blue-500" />,
-        title: "Uncertain Assessment"
-      }
-    };
-
-    return styles[likelihood];
-  };
-
   const handlePrint = () => {
     window.print();
   };
@@ -116,17 +87,17 @@ const AssessmentDetail = () => {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl">Assessment not found</h2>
-        <Button 
+        <button 
           onClick={() => navigate('/history')}
-          className="mt-4"
+          className="mt-4 px-4 py-2 bg-primary text-white rounded"
         >
           Return to History
-        </Button>
+        </button>
       </div>
     );
   }
 
-  const { bg, badge, icon, title } = getLikelihoodInfo(assessment.analysis.likelihood);
+  const formattedDate = formatDate(assessment.assessmentDate);
 
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -135,215 +106,28 @@ const AssessmentDetail = () => {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-medical-200 rounded-full filter blur-3xl opacity-30 transform translate-x-1/2 translate-y-1/2"></div>
       </div>
       
-      <header className="w-full py-6 px-4 sm:px-6 lg:px-8 print:hidden">
-        <div className="max-w-4xl mx-auto">
-          <div className="glass px-6 py-4 rounded-2xl">
-            <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                className="mr-2" 
-                onClick={() => navigate('/history')}
-              >
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back to History
-              </Button>
-              <h1 className="text-2xl font-medium">
-                <span className="text-medical-700">Assessment</span> Details
-              </h1>
-            </div>
-            <p className="mt-2 text-gray-600">
-              Detailed report from {formatDate(assessment.assessmentDate)}
-            </p>
-          </div>
-        </div>
-      </header>
+      <AssessmentHeader date={formattedDate} />
       
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 print:py-0 print:px-0 print:max-w-none">
         <div className="glass p-6 rounded-2xl print:shadow-none print:rounded-none print:p-0">
-          <Card className={`w-full border-2 mb-6 ${bg}`}>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  {icon}
-                  <CardTitle className="ml-2 text-xl">{title}</CardTitle>
-                </div>
-                <Badge className={badge}>
-                  {assessment.analysis.likelihood === 'high' 
-                    ? 'High' 
-                    : assessment.analysis.likelihood === 'medium'
-                    ? 'Medium'
-                    : assessment.analysis.likelihood === 'low'
-                    ? 'Low'
-                    : 'Unknown'} Likelihood
-                </Badge>
-              </div>
-              <CardDescription className="mt-2 flex items-center">
-                <Calendar className="h-4 w-4 mr-1" />
-                Assessment Date: {formatDate(assessment.assessmentDate)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pb-2">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium mb-2">Key Factors:</h3>
-                  <ul className="list-disc pl-5 space-y-1 text-sm">
-                    {assessment.analysis.reasons.map((reason: string, index: number) => (
-                      <li key={index}>{reason}</li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div>
-                  <h3 className="font-medium mb-2">Recommendation:</h3>
-                  <p className="text-sm">{assessment.analysis.advice}</p>
-                </div>
-                
-                {assessment.imageUrl && (
-                  <div className="mt-4">
-                    <h3 className="font-medium mb-2">Uploaded Image:</h3>
-                    <div className="relative border rounded-md overflow-hidden">
-                      <img 
-                        src={assessment.imageUrl} 
-                        alt="Skin condition" 
-                        className="w-full max-h-60 object-contain" 
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end border-t p-4 print:hidden">
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={handlePrint}>
-                  <Printer className="mr-2 h-4 w-4" />
-                  Print Report
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
+          <AssessmentResultCard 
+            likelihood={assessment.analysis.likelihood}
+            score={assessment.analysis.score}
+            reasons={assessment.analysis.reasons}
+            advice={assessment.analysis.advice}
+            imageUrl={assessment.imageUrl}
+            assessmentDate={assessment.assessmentDate}
+            formattedDate={formattedDate}
+            onPrint={handlePrint}
+          />
           
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg">Questionnaire Responses</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <dl className="space-y-4">
-                <div>
-                  <dt className="font-medium">Fever</dt>
-                  <dd className="text-gray-600 mt-1">
-                    {assessment.questionnaire.fever === 'high' && 'Yes, high fever (over 101°F/38.3°C)'}
-                    {assessment.questionnaire.fever === 'mild' && 'Yes, mild fever'}
-                    {assessment.questionnaire.fever === 'no' && 'No fever'}
-                    {assessment.questionnaire.fever === 'unsure' && 'Unsure/haven\'t checked'}
-                  </dd>
-                </div>
-                
-                <div>
-                  <dt className="font-medium">Rash Appearance</dt>
-                  <dd className="text-gray-600 mt-1">
-                    {assessment.questionnaire.rashAppearance === 'fluid-blisters' && 'Small fluid-filled blisters'}
-                    {assessment.questionnaire.rashAppearance === 'red-spots' && 'Small red spots/bumps'}
-                    {assessment.questionnaire.rashAppearance === 'crusted' && 'Crusted or scabbed spots'}
-                    {assessment.questionnaire.rashAppearance === 'mixed' && 'Mix of different stages'}
-                    {assessment.questionnaire.rashAppearance === 'other' && 'Other type of rash'}
-                  </dd>
-                </div>
-                
-                <div>
-                  <dt className="font-medium">Rash Location</dt>
-                  <dd className="text-gray-600 mt-1">
-                    {assessment.questionnaire.rashLocation.map((location: string) => {
-                      const locationMap: {[key: string]: string} = {
-                        'face': 'Face', 
-                        'scalp': 'Scalp/Hairline',
-                        'chest': 'Chest',
-                        'back': 'Back',
-                        'stomach': 'Stomach',
-                        'arms': 'Arms',
-                        'legs': 'Legs',
-                        'inside-mouth': 'Inside mouth',
-                        'palms-soles': 'Palms/Soles',
-                        'groin': 'Groin area'
-                      };
-                      return locationMap[location] || location;
-                    }).join(', ')}
-                  </dd>
-                </div>
-                
-                <div>
-                  <dt className="font-medium">Itchiness</dt>
-                  <dd className="text-gray-600 mt-1">
-                    {assessment.questionnaire.rashItchy === 'very' && 'Very itchy'}
-                    {assessment.questionnaire.rashItchy === 'somewhat' && 'Somewhat itchy'}
-                    {assessment.questionnaire.rashItchy === 'no' && 'Not itchy'}
-                    {assessment.questionnaire.rashItchy === 'painful' && 'More painful than itchy'}
-                  </dd>
-                </div>
-                
-                {assessment.questionnaire.otherSymptoms && assessment.questionnaire.otherSymptoms.length > 0 && (
-                  <div>
-                    <dt className="font-medium">Other Symptoms</dt>
-                    <dd className="text-gray-600 mt-1">
-                      {assessment.questionnaire.otherSymptoms.map((symptom: string) => {
-                        const symptomMap: {[key: string]: string} = {
-                          'headache': 'Headache',
-                          'fatigue': 'Fatigue/Tiredness',
-                          'sore-throat': 'Sore throat',
-                          'loss-appetite': 'Loss of appetite',
-                          'muscle-pain': 'Muscle/joint aches',
-                          'swollen-lymph': 'Swollen lymph nodes',
-                          'cough': 'Cough',
-                          'none': 'None of these'
-                        };
-                        return symptomMap[symptom] || symptom;
-                      }).join(', ')}
-                    </dd>
-                  </div>
-                )}
-                
-                <div>
-                  <dt className="font-medium">Exposure History</dt>
-                  <dd className="text-gray-600 mt-1">
-                    {assessment.questionnaire.exposureHistory === 'known' && 'Known contact with someone with chicken pox'}
-                    {assessment.questionnaire.exposureHistory === 'possible' && 'Possible exposure, not certain'}
-                    {assessment.questionnaire.exposureHistory === 'no' && 'No known exposure'}
-                    {assessment.questionnaire.exposureHistory === 'history' && 'Had chicken pox before/vaccinated'}
-                  </dd>
-                </div>
-                
-                <div>
-                  <dt className="font-medium">Duration of Symptoms</dt>
-                  <dd className="text-gray-600 mt-1">
-                    {assessment.questionnaire.daysWithSymptoms === '1' && '1 day or less'}
-                    {assessment.questionnaire.daysWithSymptoms === '2-3' && '2-3 days'}
-                    {assessment.questionnaire.daysWithSymptoms === '4-7' && '4-7 days'}
-                    {assessment.questionnaire.daysWithSymptoms === 'over-7' && 'More than 7 days'}
-                  </dd>
-                </div>
-              </dl>
-            </CardContent>
-          </Card>
+          <QuestionnaireResponsesCard questionnaire={assessment.questionnaire} />
           
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-700">
-                This application provides a preliminary assessment only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of a qualified healthcare provider with any questions you may have regarding a medical condition. Never disregard professional medical advice or delay in seeking it because of something you have read on this application.
-              </p>
-            </CardContent>
-          </Card>
+          <DisclaimerCard />
         </div>
       </main>
       
-      <footer className="w-full py-4 px-4 sm:px-6 lg:px-8 mt-auto print:hidden">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center text-sm text-gray-500">
-            <p>This is a demonstration application. Always consult a healthcare professional for medical advice.</p>
-          </div>
-        </div>
-      </footer>
+      <AssessmentFooter />
     </div>
   );
 };
