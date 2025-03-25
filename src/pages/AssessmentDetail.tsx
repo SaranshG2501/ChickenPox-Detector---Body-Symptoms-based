@@ -10,8 +10,8 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
 import { Timestamp } from 'firebase/firestore';
+import { Printer } from 'lucide-react';
 
-// Define interface for the assessment data
 interface AssessmentData {
   id: string;
   userId: string;
@@ -42,7 +42,6 @@ const AssessmentDetail = () => {
         setLoading(true);
         const assessmentData = await getAssessmentById(id) as AssessmentData;
         
-        // Ensure the assessment belongs to the current user
         if (assessmentData.userId !== currentUser.uid) {
           toast.error("You don't have permission to view this assessment");
           navigate('/history');
@@ -132,13 +131,11 @@ const AssessmentDetail = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col">
-      {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden -z-10 opacity-50">
         <div className="absolute top-0 left-0 w-96 h-96 bg-medical-100 rounded-full filter blur-3xl opacity-30 transform -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-medical-200 rounded-full filter blur-3xl opacity-30 transform translate-x-1/2 translate-y-1/2"></div>
       </div>
       
-      {/* Header */}
       <header className="w-full py-6 px-4 sm:px-6 lg:px-8 print:hidden">
         <div className="max-w-4xl mx-auto">
           <div className="glass px-6 py-4 rounded-2xl">
@@ -162,10 +159,8 @@ const AssessmentDetail = () => {
         </div>
       </header>
       
-      {/* Main content */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 print:py-0 print:px-0 print:max-w-none">
         <div className="glass p-6 rounded-2xl print:shadow-none print:rounded-none print:p-0">
-          {/* Assessment Result Card */}
           <Card className={`w-full border-2 mb-6 ${bg}`}>
             <CardHeader className="pb-2">
               <div className="flex justify-between items-center">
@@ -228,7 +223,6 @@ const AssessmentDetail = () => {
             </CardFooter>
           </Card>
           
-          {/* Questionnaire Responses */}
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg">Questionnaire Responses</CardTitle>
@@ -331,7 +325,6 @@ const AssessmentDetail = () => {
             </CardContent>
           </Card>
           
-          {/* Disclaimer */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Important Disclaimer</CardTitle>
@@ -345,7 +338,6 @@ const AssessmentDetail = () => {
         </div>
       </main>
       
-      {/* Footer */}
       <footer className="w-full py-4 px-4 sm:px-6 lg:px-8 mt-auto print:hidden">
         <div className="max-w-4xl mx-auto">
           <div className="text-center text-sm text-gray-500">
