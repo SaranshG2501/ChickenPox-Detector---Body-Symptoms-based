@@ -25,11 +25,27 @@ import {
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
+// Define interface for the assessment data
+interface AssessmentData {
+  id: string;
+  userId: string;
+  questionnaire: any;
+  analysis: {
+    likelihood: 'high' | 'medium' | 'low' | 'unknown';
+    score: number;
+    reasons: string[];
+    advice: string;
+  };
+  imageUrl: string | null;
+  assessmentDate: string;
+  createdAt: any;
+}
+
 const AssessmentDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const [assessment, setAssessment] = useState<any>(null);
+  const [assessment, setAssessment] = useState<AssessmentData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,7 +54,7 @@ const AssessmentDetail = () => {
       
       try {
         setLoading(true);
-        const assessmentData = await getAssessmentById(id);
+        const assessmentData = await getAssessmentById(id) as AssessmentData;
         
         // Ensure the assessment belongs to the current user
         if (assessmentData.userId !== currentUser.uid) {
