@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -12,7 +11,8 @@ import {
   orderBy, 
   Timestamp,
   doc,
-  getDoc
+  getDoc,
+  DocumentData
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -46,7 +46,7 @@ export async function uploadImage(imageFile: File, userId: string): Promise<stri
 }
 
 // Function to save assessment results to Firestore
-export async function saveAssessment(userId: string, data: any) {
+export async function saveAssessment(userId: string, data: Record<string, unknown>) {
   try {
     const assessmentData = {
       ...data,

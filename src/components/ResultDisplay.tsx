@@ -15,17 +15,19 @@ interface ResultDisplayProps {
   onRestart: () => void;
 }
 
+interface AnalysisResult {
+  likelihood: 'high' | 'medium' | 'low' | 'unknown';
+  score: number;
+  reasons: string[];
+  advice: string;
+}
+
 const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDisplayProps) => {
   const { currentUser } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   
-  const analyzeResults = (): { 
-    likelihood: 'high' | 'medium' | 'low' | 'unknown',
-    score: number,
-    reasons: string[],
-    advice: string
-  } => {
+  const analyzeResults = (): AnalysisResult => {
     let score = 0;
     const reasons: string[] = [];
     

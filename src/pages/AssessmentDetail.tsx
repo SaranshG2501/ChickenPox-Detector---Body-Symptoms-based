@@ -1,35 +1,21 @@
-
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { AlertCircle, CheckCircle, HelpCircle, ArrowLeft, Calendar } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAssessmentById } from '@/lib/firebase';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
-  AlertCircle, 
-  CheckCircle, 
-  HelpCircle, 
-  CalendarIcon, 
-  ArrowLeft, 
-  Printer, 
-  Download 
-} from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
+import { Timestamp } from 'firebase/firestore';
 
 // Define interface for the assessment data
 interface AssessmentData {
   id: string;
   userId: string;
-  questionnaire: any;
+  questionnaire: QuestionnaireResults;
   analysis: {
     likelihood: 'high' | 'medium' | 'low' | 'unknown';
     score: number;
@@ -38,7 +24,7 @@ interface AssessmentData {
   };
   imageUrl: string | null;
   assessmentDate: string;
-  createdAt: any;
+  createdAt: Timestamp;
 }
 
 const AssessmentDetail = () => {
@@ -198,7 +184,7 @@ const AssessmentDetail = () => {
                 </Badge>
               </div>
               <CardDescription className="mt-2 flex items-center">
-                <CalendarIcon className="h-4 w-4 mr-1" />
+                <Calendar className="h-4 w-4 mr-1" />
                 Assessment Date: {formatDate(assessment.assessmentDate)}
               </CardDescription>
             </CardHeader>
