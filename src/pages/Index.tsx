@@ -6,6 +6,9 @@ import ResultDisplay from '@/components/ResultDisplay';
 import LogoutButton from '@/components/LogoutButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from "sonner";
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { History } from 'lucide-react';
 
 enum ScreenState {
   UPLOAD,
@@ -15,6 +18,7 @@ enum ScreenState {
 
 const Index = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [currentScreen, setCurrentScreen] = useState<ScreenState>(ScreenState.UPLOAD);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -61,7 +65,8 @@ const Index = () => {
       case ScreenState.RESULTS:
         return <ResultDisplay 
           results={questionnaireResults!} 
-          imagePreview={imagePreview} 
+          imagePreview={imagePreview}
+          imageFile={uploadedImage}
           onRestart={handleRestart}
         />;
       default:
@@ -90,6 +95,15 @@ const Index = () => {
                 <span className="text-medical-700">Chicken Pox</span> Symptom Assessment
               </h1>
               <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate('/history')}
+                  className="hidden sm:flex"
+                >
+                  <History className="mr-2 h-4 w-4" />
+                  History
+                </Button>
                 <span className="text-sm text-gray-600 hidden sm:inline">
                   Welcome, {currentUser?.displayName || 'User'}
                 </span>
@@ -99,6 +113,17 @@ const Index = () => {
             <p className="mt-2 text-gray-600">
               Upload an image of the affected area and answer a few questions for a preliminary assessment
             </p>
+            <div className="mt-2 sm:hidden">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/history')}
+                className="w-full"
+              >
+                <History className="mr-2 h-4 w-4" />
+                View Assessment History
+              </Button>
+            </div>
           </div>
         </div>
       </header>

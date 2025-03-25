@@ -9,6 +9,8 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import AssessmentHistory from "./pages/AssessmentHistory";
+import AssessmentDetail from "./pages/AssessmentDetail";
 
 // Protected route component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -40,6 +42,22 @@ const AppContent = () => (
           element={
             <ProtectedRoute>
               <Index />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/history" 
+          element={
+            <ProtectedRoute>
+              <AssessmentHistory />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assessment/:id" 
+          element={
+            <ProtectedRoute>
+              <AssessmentDetail />
             </ProtectedRoute>
           } 
         />

@@ -1,17 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle, HelpCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import { AlertCircle, CheckCircle, HelpCircle, RefreshCw, ExternalLink, Save } from 'lucide-react';
 import { QuestionnaireResults } from './SymptomsQuestionnaire';
+import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { saveAssessment, uploadImage } from '@/lib/firebase';
+import { toast } from "sonner";
 
 interface ResultDisplayProps {
   results: QuestionnaireResults;
   imagePreview: string | null;
+  imageFile: File | null;
   onRestart: () => void;
 }
 
-const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps) => {
-  // Logic to determine the likelihood of chicken pox
+const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDisplayProps) => {
+  const { currentUser } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  
   const analyzeResults = (): { 
     likelihood: 'high' | 'medium' | 'low' | 'unknown',
     score: number,
@@ -21,7 +29,6 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
     let score = 0;
     const reasons: string[] = [];
     
-    // Fever assessment
     if (results.fever === 'high') {
       score += 3;
       reasons.push("High fever (common in chicken pox)");
@@ -30,7 +37,6 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
       reasons.push("Mild fever (can occur with chicken pox)");
     }
     
-    // Rash appearance
     if (results.rashAppearance === 'fluid-blisters') {
       score += 4;
       reasons.push("Fluid-filled blisters (characteristic of chicken pox)");
@@ -45,7 +51,6 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
       reasons.push("Crusted lesions (could be healing chicken pox)");
     }
     
-    // Rash distribution
     const bodyCount = results.rashLocation.length;
     const widespreadLocations = ['face', 'chest', 'back', 'stomach', 'arms', 'legs'].filter(
       loc => results.rashLocation.includes(loc)
@@ -59,19 +64,16 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
       reasons.push("Multiple locations affected");
     }
     
-    // Inside mouth is significant
     if (results.rashLocation.includes('inside-mouth')) {
       score += 2;
       reasons.push("Lesions inside mouth (common in chicken pox)");
     }
     
-    // Palms and soles typically NOT affected in chicken pox
     if (results.rashLocation.includes('palms-soles')) {
       score -= 2;
       reasons.push("Palms/soles affected (unusual for chicken pox)");
     }
     
-    // Itchiness
     if (results.rashItchy === 'very') {
       score += 3;
       reasons.push("Very itchy rash (typical of chicken pox)");
@@ -83,7 +85,6 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
       reasons.push("More painful than itchy (less typical for chicken pox)");
     }
     
-    // Other symptoms
     const relevantSymptoms = ['headache', 'fatigue', 'loss-appetite', 'swollen-lymph'].filter(
       symp => results.otherSymptoms.includes(symp)
     ).length;
@@ -96,7 +97,6 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
       reasons.push("Some relevant symptoms present");
     }
     
-    // Exposure history
     if (results.exposureHistory === 'known') {
       score += 4;
       reasons.push("Known exposure to chicken pox (significant risk factor)");
@@ -108,13 +108,11 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
       reasons.push("Prior chicken pox/vaccination (reduces likelihood)");
     }
     
-    // Duration
     if (results.daysWithSymptoms === '2-3' || results.daysWithSymptoms === '4-7') {
       score += 2;
       reasons.push("Timeline consistent with chicken pox progression");
     }
     
-    // Determine likelihood category and advice
     let likelihood: 'high' | 'medium' | 'low' | 'unknown' = 'unknown';
     let advice = '';
     
@@ -137,7 +135,6 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
   
   const result = analyzeResults();
   
-  // Color and icon mapping based on likelihood
   const resultDisplay = {
     high: {
       icon: <AlertCircle className="h-8 w-8 text-red-500" />,
@@ -166,6 +163,42 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
   };
   
   const current = resultDisplay[result.likelihood];
+
+  const handleSaveAssessment = async () => {
+    if (!currentUser) {
+      toast.error("You must be logged in to save assessments");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      let imageUrl = null;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile, currentUser.uid);
+      }
+
+      const assessmentData = {
+        questionnaire: results,
+        analysis: {
+          likelihood: result.likelihood,
+          score: result.score,
+          reasons: result.reasons,
+          advice: result.advice
+        },
+        imageUrl: imageUrl,
+        assessmentDate: new Date().toISOString()
+      };
+
+      await saveAssessment(currentUser.uid, assessmentData);
+      setIsSaved(true);
+      toast.success("Assessment saved successfully!");
+    } catch (error) {
+      console.error("Error saving assessment:", error);
+      toast.error("Failed to save assessment. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
   
   return (
     <div className="animate-slide-up">
@@ -213,10 +246,20 @@ const ResultDisplay = ({ results, imagePreview, onRestart }: ResultDisplayProps)
           </div>
         </CardContent>
         <CardFooter className="flex justify-between border-t p-4">
-          <Button variant="outline" onClick={onRestart}>
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Start New Assessment
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onRestart}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Start New Assessment
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleSaveAssessment} 
+              disabled={isSaving || isSaved}
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? 'Saving...' : isSaved ? 'Saved' : 'Save Results'}
+            </Button>
+          </div>
           <Button>
             <ExternalLink className="mr-2 h-4 w-4" />
             Consult Doctor
