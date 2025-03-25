@@ -23,4 +23,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-export default app; // Make sure this line is included for proper exporting
+export default app; // Export for potential use with serverless functions

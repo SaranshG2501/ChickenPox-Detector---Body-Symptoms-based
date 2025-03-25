@@ -24,5 +24,14 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     sourcemap: true,
     minify: 'terser',
+    emptyOutDir: true, // Ensure clean builds
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+        }
+      }
+    }
   }
 }));

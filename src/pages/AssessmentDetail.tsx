@@ -3,14 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle, HelpCircle, ArrowLeft, Calendar } from 'lucide-react';
+import { AlertCircle, CheckCircle, HelpCircle, ArrowLeft, Calendar, Printer } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAssessmentById } from '@/lib/firebase';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
 import { Timestamp } from 'firebase/firestore';
-import { Printer } from 'lucide-react';
 
 interface AssessmentData {
   id: string;
