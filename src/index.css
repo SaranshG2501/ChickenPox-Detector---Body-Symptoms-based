@@ -111,15 +111,6 @@
   }
 }
 
-/* Image upload area */
-.upload-area {
-  transition: all 0.3s ease;
-}
-
-.upload-area:hover {
-  transform: translateY(-2px);
-}
-
 /* Button hover effects */
 .button-hover-effect {
   position: relative;

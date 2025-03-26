@@ -2,8 +2,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import tailwindcssPlugin from 'tailwindcss';
-import autoprefixerPlugin from 'autoprefixer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,8 +20,8 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        tailwindcssPlugin(),
-        autoprefixerPlugin(),
+        require('tailwindcss'),
+        require('autoprefixer'),
       ],
     },
   },
