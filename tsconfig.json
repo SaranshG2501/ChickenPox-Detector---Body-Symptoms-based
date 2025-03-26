@@ -14,6 +14,11 @@
     "skipLibCheck": true,
     "allowJs": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "target": "ESNext", // Set the target to ESNext
+    "module": "ESNext", // Set the module to ESNext
+    "jsx": "react-jsx", // Enable JSX support
+    "esModuleInterop": true, // Enable interop for CommonJS modules
+    "resolveJsonModule": true // Allow importing JSON files
   }
 }
