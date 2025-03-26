@@ -6,7 +6,7 @@ import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   server: {
     host: "::",
     port: 8080,
@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => ({
   css: {
     postcss: {
       plugins: [
-        tailwindcss,
-        autoprefixer,
+        tailwindcss(),
+        autoprefixer(),
       ],
     },
   },
@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     sourcemap: true,
     minify: 'terser',
-    emptyOutDir: true, // Ensure clean builds
+    emptyOutDir: true,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -41,4 +41,4 @@ export default defineConfig(({ mode }) => ({
       }
     }
   }
-}));
+});
