@@ -28,7 +28,7 @@ import { toast } from 'sonner';
 
 interface AssessmentRecord {
   id: string;
-  questionnaire: any;
+  questionnaire;
   analysis: {
     likelihood: 'high' | 'medium' | 'low' | 'unknown';
     score: number;
@@ -37,7 +37,7 @@ interface AssessmentRecord {
   };
   imageUrl: string | null;
   assessmentDate: string;
-  createdAt: any;
+  createdAt;
 }
 
 const AssessmentHistory = () => {

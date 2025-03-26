@@ -67,7 +67,7 @@ const Signup = () => {
       );
       toast.success("Account created successfully!");
       navigate("/");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Signup error:", error);
       toast.error(error.message || "Failed to create account.");
     } finally {

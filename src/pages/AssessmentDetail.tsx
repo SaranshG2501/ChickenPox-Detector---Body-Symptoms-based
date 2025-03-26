@@ -15,7 +15,7 @@ import { Printer } from 'lucide-react';
 const AssessmentDetail = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
-  const [assessment, setAssessment] = useState<any>(null);
+  const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const componentRef = useRef<HTMLDivElement>(null);
