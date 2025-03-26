@@ -1,128 +1,116 @@
 
-import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getAssessmentById } from '@/lib/firebase';
-import { format } from 'date-fns';
-import { toast } from 'sonner';
-import { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
-import { Timestamp } from 'firebase/firestore';
-import { AssessmentHeader } from '@/components/assessment/AssessmentHeader';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { toast } from "sonner";
 import { AssessmentResultCard } from '@/components/assessment/AssessmentResultCard';
 import { QuestionnaireResponsesCard } from '@/components/assessment/QuestionnaireResponsesCard';
 import { DisclaimerCard } from '@/components/assessment/DisclaimerCard';
+import { AssessmentHeader } from '@/components/assessment/AssessmentHeader';
 import { AssessmentFooter } from '@/components/assessment/AssessmentFooter';
-
-interface AssessmentData {
-  id: string;
-  userId: string;
-  questionnaire: QuestionnaireResults;
-  analysis: {
-    likelihood: 'high' | 'medium' | 'low' | 'unknown';
-    score: number;
-    reasons: string[];
-    advice: string;
-  };
-  imageUrl: string | null;
-  assessmentDate: string;
-  createdAt: Timestamp;
-}
+import { Printer } from 'lucide-react';
 
 const AssessmentDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
-  const [assessment, setAssessment] = useState<AssessmentData | null>(null);
+  const [assessment, setAssessment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState<string | null>(null);
+  const componentRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const fetchAssessment = async () => {
-      if (!id || !currentUser) return;
+      if (!currentUser || !id) {
+        setError("Assessment not found");
+        setLoading(false);
+        return;
+      }
       
       try {
-        setLoading(true);
-        const assessmentData = await getAssessmentById(id) as AssessmentData;
+        const assessmentRef = doc(db, `users/${currentUser.uid}/assessments`, id);
+        const assessmentDoc = await getDoc(assessmentRef);
         
-        if (assessmentData.userId !== currentUser.uid) {
-          toast.error("You don't have permission to view this assessment");
-          navigate('/history');
-          return;
+        if (assessmentDoc.exists()) {
+          setAssessment({
+            id: assessmentDoc.id,
+            ...assessmentDoc.data()
+          });
+        } else {
+          setError("Assessment not found");
         }
-        
-        setAssessment(assessmentData);
-      } catch (error) {
-        console.error('Error fetching assessment:', error);
-        toast.error('Failed to load assessment details.');
-        navigate('/history');
+      } catch (err) {
+        console.error("Error fetching assessment:", err);
+        setError("Error loading assessment");
+        toast.error("Failed to load assessment details");
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchAssessment();
-  }, [id, currentUser, navigate]);
-
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return format(date, 'PPP p');
-    } catch (error) {
-      return 'Invalid date';
-    }
-  };
-
+  }, [currentUser, id]);
+  
   const handlePrint = () => {
     window.print();
   };
-
+  
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-medical-600"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-lg">Loading assessment details...</div>
       </div>
     );
   }
-
-  if (!assessment) {
+  
+  if (error || !assessment) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-xl">Assessment not found</h2>
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <div className="text-xl text-red-600 mb-4">{error || "Assessment not found"}</div>
         <button 
-          onClick={() => navigate('/history')}
-          className="mt-4 px-4 py-2 bg-primary text-white rounded"
+          onClick={() => navigate('/history')} 
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          Return to History
+          Back to History
         </button>
       </div>
     );
   }
-
-  const formattedDate = formatDate(assessment.assessmentDate);
-
+  
+  // Format the date for display
+  const assessmentDate = new Date(assessment.timestamp.seconds * 1000);
+  const formattedDate = assessmentDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
   return (
-    <div className="relative min-h-screen flex flex-col">
-      <div className="absolute inset-0 overflow-hidden -z-10 opacity-50">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-medical-100 rounded-full filter blur-3xl opacity-30 transform -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-medical-200 rounded-full filter blur-3xl opacity-30 transform translate-x-1/2 translate-y-1/2"></div>
-      </div>
-      
+    <div className="min-h-screen flex flex-col">
       <AssessmentHeader date={formattedDate} />
       
-      <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 print:py-0 print:px-0 print:max-w-none">
-        <div className="glass p-6 rounded-2xl print:shadow-none print:rounded-none print:p-0">
-          <AssessmentResultCard 
-            likelihood={assessment.analysis.likelihood}
-            score={assessment.analysis.score}
-            reasons={assessment.analysis.reasons}
-            advice={assessment.analysis.advice}
+      <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div ref={componentRef} className="space-y-6">
+          {/* Assessment Result Card */}
+          <AssessmentResultCard
+            likelihood={assessment.result.likelihood}
+            score={assessment.result.score}
+            reasons={assessment.result.reasons}
+            advice={assessment.result.advice}
             imageUrl={assessment.imageUrl}
-            assessmentDate={assessment.assessmentDate}
+            assessmentDate={assessmentDate.toString()}
             formattedDate={formattedDate}
             onPrint={handlePrint}
           />
           
+          {/* Questionnaire Responses Card */}
           <QuestionnaireResponsesCard questionnaire={assessment.questionnaire} />
           
+          {/* Disclaimer Card */}
           <DisclaimerCard />
         </div>
       </main>
