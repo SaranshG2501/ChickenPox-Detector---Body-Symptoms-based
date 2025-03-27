@@ -61,7 +61,7 @@
 /* Global Styles */
 @layer base {
   * {
-    @apply border-border;
+    @apply border-b-blue-600;
   }
 
   body {
