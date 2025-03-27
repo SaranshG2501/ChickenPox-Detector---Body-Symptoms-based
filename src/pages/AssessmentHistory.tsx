@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserAssessments } from '@/lib/firebase';
@@ -48,22 +47,35 @@ const AssessmentHistory = () => {
 
   useEffect(() => {
     const fetchAssessments = async () => {
-      if (!currentUser) return;
+      if (!currentUser) {
+        console.warn('No user is currently authenticated.');
+        return;
+      }
       
       try {
         setLoading(true);
         const userAssessments = await getUserAssessments(currentUser.uid);
+        console.log('Fetched assessments:', userAssessments);
+        
+        if (!userAssessments || userAssessments.length === 0) {
+          console.warn('No assessments found for the current user.');
+        }
+        
         setAssessments(userAssessments as AssessmentRecord[]);
       } catch (error) {
         console.error('Error fetching assessments:', error);
-        toast.error('Failed to load your assessment history.');
+        toast.error('Failed to load your assessment history. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAssessments();
+    if (currentUser) {
+      fetchAssessments();
+    }
   }, [currentUser]);
+
+  console.log('Assessments:', assessments);
 
   const getLikelihoodBadge = (likelihood: 'high' | 'medium' | 'low' | 'unknown') => {
     const badgeStyles = {
@@ -107,7 +119,7 @@ const AssessmentHistory = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-medical-600"></div>
+        <div className ="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-medical-600"></div>
       </div>
     );
   }
