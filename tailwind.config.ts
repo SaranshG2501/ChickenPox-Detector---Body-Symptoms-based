@@ -62,6 +62,7 @@ export default {
           ring: 'hsl(var(--sidebar-ring))'
         },
         medical: {
+          '50': '#f0f7ff',
           '100': '#E6F7FF',
           '200': '#BAE7FF',
           '300': '#91D5FF',

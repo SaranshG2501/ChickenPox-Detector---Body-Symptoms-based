@@ -12,13 +12,13 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 210 100% 50%;
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 90% 96.1%;
+    --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -35,7 +35,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 100% 50%;
+    --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -54,12 +54,12 @@
 /* Global Styles */
 @layer base {
   * {
-    @apply border-b-blue-700; /* Apply a border to all elements */
+    @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground; /* Set background and text colors */
-    font-feature-settings: "rlig" 1, "calt" 1; /* Enable ligatures and contextual alternates */
+    @apply bg-background text-foreground min-h-screen;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   /* Custom Scrollbar Styles */
@@ -84,13 +84,14 @@
 
 /* Glass Effect */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 }
 
-@supports not (backdrop-filter: blur(10px)) {
+@supports not (backdrop-filter: blur(12px)) {
   .glass {
     background: rgba(255, 255, 255, 0.9);
   }
@@ -109,33 +110,60 @@
 .button-hover-effect {
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.button-hover-effect:after {
+.button-hover-effect::before {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.5);
-  opacity: 0;
-  border-radius: 100%;
-  transform: scale(1, 1) translate(-50%);
-  transform-origin: 50% 50%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
 }
 
-.button-hover-effect:hover:after {
-  animation: ripple 0.6s ease-out;
+.button-hover-effect:hover::before {
+  transform: translateX(0);
 }
 
-@keyframes ripple {
+.button-hover-effect:active {
+  transform: scale(0.98);
+}
+
+@keyframes pulse-once {
   0% {
-    transform: scale(0, 0);
-    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
   }
   100% {
-    transform: scale(20, 20);
-    opacity: 0;
+    transform: scale(1);
   }
+}
+
+.animate-pulse-once {
+  animation: pulse-once 1.5s ease-in-out;
+}
+
+/* Form Animations */
+.form-input-animate {
+  transition: all 0.3s ease;
+}
+
+.form-input-animate:focus {
+  transform: translateY(-2px);
+}
+
+/* Card Hover Effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
