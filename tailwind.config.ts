@@ -22,7 +22,9 @@ export default {
           light: 'hsl(var(--border-light))',
           dark: 'hsl(var(--border-dark))',
           muted: 'hsl(var(--border-muted))',
-          accent: 'hsl(var(--border-accent))'
+          accent: 'hsl(var(--border-accent))',
+          blue: 'hsl(210 40% 96.1%)', // Adding a blue border option
+          medical: 'hsl(var(--medical-500))', // Medical theme blue
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
