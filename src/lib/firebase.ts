@@ -1,3 +1,4 @@
+
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -33,16 +34,19 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Function to upload an image to Firebase Storage
-export async function uploadImage(imageFile: File, userId: string): Promise<string> {
-  const timestamp = Date.now();
-  const storagePath = `user-images/${userId}/${timestamp}-${imageFile.name}`;
-  const storageRef = ref(storage, storagePath);
-  
-  await uploadBytes(storageRef, imageFile);
-  const downloadURL = await getDownloadURL(storageRef);
-  
-  return downloadURL;
+// Function to convert image file to base64 string
+export async function convertImageToBase64(imageFile: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      resolve(base64String);
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsDataURL(imageFile);
+  });
 }
 
 // Function to save assessment results to Firestore

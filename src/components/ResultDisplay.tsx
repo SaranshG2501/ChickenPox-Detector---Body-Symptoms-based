@@ -5,7 +5,7 @@ import { AlertCircle, CheckCircle, HelpCircle, RefreshCw, ExternalLink, Save } f
 import { QuestionnaireResults } from './SymptomsQuestionnaire';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { saveAssessment, uploadImage } from '@/lib/firebase';
+import { saveAssessment, convertImageToBase64 } from '@/lib/firebase';
 import { toast } from "sonner";
 
 interface ResultDisplayProps {
@@ -174,9 +174,9 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
 
     setIsSaving(true);
     try {
-      let imageUrl = null;
+      let imageBase64 = null;
       if (imageFile) {
-        imageUrl = await uploadImage(imageFile, currentUser.uid);
+        imageBase64 = await convertImageToBase64(imageFile);
       }
 
       const assessmentData = {
@@ -187,7 +187,7 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
           reasons: result.reasons,
           advice: result.advice
         },
-        imageUrl: imageUrl,
+        imageData: imageBase64,
         assessmentDate: new Date().toISOString()
       };
 
