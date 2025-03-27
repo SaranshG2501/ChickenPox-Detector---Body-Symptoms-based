@@ -16,7 +16,18 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true, // Ensures compatibility with CommonJS modules
+    "forceConsistentCasingInFileNames": true // Helps prevent issues with file name casing
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.ts", // Include your Vite config
+    "src/**/*", // Include all TypeScript files in the src directory
+    "@types/**/*" // Include any custom type definitions if you have a @types directory
+  ],
+  "exclude": [
+    "node_modules", // Exclude node_modules
+    "**/*.spec.ts", // Optionally exclude test files
+    "**/*.test.ts" // Optionally exclude test files
+  ]
 }

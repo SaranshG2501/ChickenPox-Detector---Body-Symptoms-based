@@ -20,6 +20,7 @@
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true // Added for consistency
   }
 }

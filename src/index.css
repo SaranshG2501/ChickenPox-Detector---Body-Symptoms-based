@@ -54,7 +54,7 @@
 /* Global Styles */
 @layer base {
   * {
-    @apply border-border; /* Apply a border to all elements */
+    @apply border-b-blue-700; /* Apply a border to all elements */
   }
 
   body {
