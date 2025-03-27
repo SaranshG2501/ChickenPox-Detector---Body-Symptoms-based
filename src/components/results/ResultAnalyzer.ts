@@ -104,7 +104,7 @@ export function analyzeResults(results: QuestionnaireResults): AnalysisResult {
     advice = "Your symptoms have few features typically associated with chicken pox, but a healthcare provider should evaluate any rash or concerning symptoms. There are many conditions that can cause rashes, and professional diagnosis is important.";
   } else {
     likelihood = 'unknown';
-    advice = "Based on the information provided, we cannot determine if chicken pox is likely. Please consult a healthcare provider for proper evaluation and diagnosis.";
+    advice = "Based on the information provided, we cannot determine if chicken pox is likely. These symptoms leads to some other catagories of diseases for which we recommend you to consult a doctor.";
   }
   
   return { likelihood, score, reasons, advice };
