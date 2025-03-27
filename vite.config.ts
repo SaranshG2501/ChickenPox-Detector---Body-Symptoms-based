@@ -1,18 +1,19 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import tailwindcss from "tailwindcss"; // Import Tailwind CSS
-import autoprefixer from "autoprefixer"; // Import Autoprefixer
+import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
   },
   plugins: [
     react(),
-  ],
+    mode === 'development' && componentTagger(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -21,8 +22,8 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        tailwindcss, // Use the imported Tailwind CSS
-        autoprefixer, // Use the imported Autoprefixer
+        require('tailwindcss'),
+        require('autoprefixer'),
       ],
     },
   },
@@ -40,4 +41,4 @@ export default defineConfig({
       }
     }
   }
-});
+}));

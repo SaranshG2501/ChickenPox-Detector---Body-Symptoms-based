@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -53,7 +54,7 @@
 /* Global Styles */
 @layer base {
   * {
-    @apply border-b-blue-800; /* Apply a bottom border to all elements */
+    @apply border-border; /* Apply a border to all elements */
   }
 
   body {
