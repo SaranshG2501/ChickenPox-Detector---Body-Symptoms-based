@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +17,13 @@ export default {
     },
     extend: {
       colors: {
+        border: {
+          DEFAULT: 'hsl(var(--border))',
+          light: 'hsl(var(--border-light))',
+          dark: 'hsl(var(--border-dark))',
+          muted: 'hsl(var(--border-muted))',
+          accent: 'hsl(var(--border-accent))'
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -74,49 +80,17 @@ export default {
           '900': '#003A8C'
         }
       },
+      borderWidth: {
+        '0.5': '0.5px',
+        '1.5': '1.5px'
+      },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
+        'sm-md': '0.375rem',  // Between sm and md
+        'lg-xl': '0.75rem',   // Between lg and xl
       },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
-        },
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' }
-        },
-        'fade-out': {
-          from: { opacity: '1' },
-          to: { opacity: '0' }
-        },
-        'slide-up': {
-          from: { transform: 'translateY(20px)', opacity: '0' },
-          to: { transform: 'translateY(0)', opacity: '1' }
-        },
-        'slide-down': {
-          from: { transform: 'translateY(-20px)', opacity: '0' },
-          to: { transform: 'translateY(0)', opacity: '1' }
-        },
-        'pulse-once': {
-          '0%, 100%': { transform: 'scale(1)' },
-          '50%': { transform: 'scale(1.05)' }
-        }
-      },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.3s ease-out',
-        'fade-out': 'fade-out 0.3s ease-out',
-        'slide-up': 'slide-up 0.5s ease-out',
-        'slide-down': 'slide-down 0.5s ease-out',
-        'pulse-once': 'pulse-once 1s ease-out'
+      boxShadow: {
+        'border-subtle': '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+        'border-medium': '0 2px 6px -1px rgba(0, 0, 0, 0.1)',
       }
     }
   },
