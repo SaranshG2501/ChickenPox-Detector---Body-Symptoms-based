@@ -7,11 +7,14 @@ import HistoryPageHeader from '@/components/history/HistoryPageHeader';
 import HistoryPageFooter from '@/components/history/HistoryPageFooter';
 import AssessmentTabContent from '@/components/history/AssessmentTabContent';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 
 const AssessmentHistory = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const { assessments, loading } = useAssessmentHistory(currentUser?.uid);
+  const { assessments, loading, error } = useAssessmentHistory(currentUser?.uid);
 
   useEffect(() => {
     console.log('AssessmentHistory component assessments:', assessments);
@@ -22,10 +25,48 @@ const AssessmentHistory = () => {
     navigate(`/assessment/${id}`);
   };
 
+  // Function to refresh the page when there's an error
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-medical-600"></div>
+      <div className="relative min-h-screen flex flex-col">
+        <HistoryPageHeader />
+        <div className="flex-1 flex justify-center items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-medical-600"></div>
+        </div>
+        <HistoryPageFooter />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="relative min-h-screen flex flex-col">
+        <HistoryPageHeader />
+        <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="glass p-6 rounded-2xl">
+            <div className="flex flex-col items-center text-center py-10">
+              <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
+              <h2 className="text-xl font-medium mb-2">Unable to Load Assessments</h2>
+              <p className="text-gray-600 mb-6">
+                There was a problem loading your assessment history. This might be due to a connection issue or a missing Firebase index.
+              </p>
+              <div className="flex space-x-4">
+                <Button onClick={handleRefresh}>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Try Again
+                </Button>
+                <Button variant="outline" onClick={() => navigate('/')}>
+                  Back to Home
+                </Button>
+              </div>
+            </div>
+          </div>
+        </main>
+        <HistoryPageFooter />
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { AssessmentRecord } from '@/components/history/AssessmentCard';
 export const useAssessmentHistory = (currentUserId: string | undefined) => {
   const [assessments, setAssessments] = useState<AssessmentRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAssessments = async () => {
@@ -18,8 +19,9 @@ export const useAssessmentHistory = (currentUserId: string | undefined) => {
       
       try {
         setLoading(true);
+        setError(null);
         const userAssessments = await getUserAssessments(currentUserId);
-        console.log('Fetched raw assessments from Firebase:', userAssessments);
+        console.log('Fetched assessments from Firebase:', userAssessments);
         
         if (!userAssessments || userAssessments.length === 0) {
           console.warn('No assessments found for the current user.');
@@ -50,9 +52,12 @@ export const useAssessmentHistory = (currentUserId: string | undefined) => {
         
         console.log('Formatted assessments:', formattedAssessments);
         setAssessments(formattedAssessments);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching assessments:', error);
+        setError(error.message || 'Failed to load your assessment history');
         toast.error('Failed to load your assessment history. Please try again later.');
+        // Still set empty assessments array to prevent undefined errors
+        setAssessments([]);
       } finally {
         setLoading(false);
       }
@@ -65,5 +70,5 @@ export const useAssessmentHistory = (currentUserId: string | undefined) => {
     }
   }, [currentUserId]);
 
-  return { assessments, loading };
+  return { assessments, loading, error };
 };

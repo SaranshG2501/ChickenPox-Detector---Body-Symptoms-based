@@ -68,30 +68,60 @@ export async function saveAssessment(userId: string, data: Record<string, unknow
 // Function to get user's assessment history
 export async function getUserAssessments(userId: string) {
   try {
-    const q = query(
-      collection(db, "assessments"),
-      where("userId", "==", userId),
-      orderBy("createdAt", "desc")
-    );
-    
-    const querySnapshot = await getDocs(q);
-    const assessments = querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        questionnaire: data.questionnaire,
-        analysis: data.analysis,
-        imageUrl: data.imageUrl,
-        assessmentDate: data.assessmentDate,
-        createdAt: data.createdAt
-      };
-    });
-    
-    return assessments;
+    // First try with compound query (requires index)
+    try {
+      const q = query(
+        collection(db, "assessments"),
+        where("userId", "==", userId),
+        orderBy("createdAt", "desc")
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return processAssessmentDocs(querySnapshot);
+    } catch (error: any) {
+      console.warn("Compound query failed, falling back to simple query:", error.message);
+      
+      // Fallback to simple query without ordering if index doesn't exist
+      const q = query(
+        collection(db, "assessments"),
+        where("userId", "==", userId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const assessments = processAssessmentDocs(querySnapshot);
+      
+      // Sort in memory instead
+      return assessments.sort((a, b) => {
+        // Handle various date formats and fallbacks
+        const dateA = a.createdAt ? new Date(a.createdAt.seconds ? a.createdAt.seconds * 1000 : a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt.seconds ? b.createdAt.seconds * 1000 : b.createdAt).getTime() : 0;
+        return dateB - dateA; // descending
+      });
+    }
   } catch (error) {
     console.error("Error fetching assessments:", error);
     throw error;
   }
+}
+
+// Helper function to process assessment documents
+function processAssessmentDocs(querySnapshot: any) {
+  return querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      questionnaire: data.questionnaire || {},
+      analysis: {
+        likelihood: data.analysis?.likelihood || 'unknown',
+        score: data.analysis?.score || 0,
+        reasons: data.analysis?.reasons || [],
+        advice: data.analysis?.advice || '',
+      },
+      imageUrl: data.imageUrl || null,
+      assessmentDate: data.assessmentDate || new Date().toISOString(),
+      createdAt: data.createdAt || null
+    };
+  });
 }
 
 // Function to get a single assessment by ID
