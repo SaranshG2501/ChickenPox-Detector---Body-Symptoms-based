@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -76,10 +75,17 @@ export async function getUserAssessments(userId: string) {
     );
     
     const querySnapshot = await getDocs(q);
-    const assessments = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const assessments = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        questionnaire: data.questionnaire,
+        analysis: data.analysis,
+        imageUrl: data.imageUrl,
+        assessmentDate: data.assessmentDate,
+        createdAt: data.createdAt
+      };
+    });
     
     return assessments;
   } catch (error) {

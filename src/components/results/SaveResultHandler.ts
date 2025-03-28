@@ -31,7 +31,7 @@ export async function handleSaveAssessment({
         reasons: analysisResult.reasons,
         advice: analysisResult.advice
       },
-      imageData: imageBase64,
+      imageUrl: imageBase64, // Changed from imageData to imageUrl to match what history page expects
       assessmentDate: new Date().toISOString()
     };
 

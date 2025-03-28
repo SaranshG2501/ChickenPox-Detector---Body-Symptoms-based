@@ -27,7 +27,7 @@ import { toast } from 'sonner';
 
 interface AssessmentRecord {
   id: string;
-  questionnaire;
+  questionnaire: any;
   analysis: {
     likelihood: 'high' | 'medium' | 'low' | 'unknown';
     score: number;
@@ -36,7 +36,7 @@ interface AssessmentRecord {
   };
   imageUrl: string | null;
   assessmentDate: string;
-  createdAt;
+  createdAt: any;
 }
 
 const AssessmentHistory = () => {
@@ -74,8 +74,6 @@ const AssessmentHistory = () => {
       fetchAssessments();
     }
   }, [currentUser]);
-
-  console.log('Assessments:', assessments);
 
   const getLikelihoodBadge = (likelihood: 'high' | 'medium' | 'low' | 'unknown') => {
     const badgeStyles = {
@@ -126,13 +124,11 @@ const AssessmentHistory = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col">
-      {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden -z-10 opacity-50">
         <div className="absolute top-0 left-0 w-96 h-96 bg-medical-100 rounded-full filter blur-3xl opacity-30 transform -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-medical-200 rounded-full filter blur-3xl opacity-30 transform translate-x-1/2 translate-y-1/2"></div>
       </div>
       
-      {/* Header */}
       <header className="w-full py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="glass px-6 py-4 rounded-2xl">
@@ -158,7 +154,6 @@ const AssessmentHistory = () => {
         </div>
       </header>
       
-      {/* Main content */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="glass p-6 rounded-2xl">
           <Tabs defaultValue="all" className="w-full">
@@ -238,7 +233,6 @@ const AssessmentHistory = () => {
         </div>
       </main>
       
-      {/* Footer */}
       <footer className="w-full py-4 px-4 sm:px-6 lg:px-8 mt-auto">
         <div className="max-w-4xl mx-auto">
           <div className="text-center text-sm text-gray-500">
