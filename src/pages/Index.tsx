@@ -1,14 +1,13 @@
-
-import { useState } from 'react';
-import ImageUpload from '@/components/ImageUpload';
-import SymptomsQuestionnaire, { QuestionnaireResults } from '@/components/SymptomsQuestionnaire';
-import ResultDisplay from '@/components/ResultDisplay';
-import LogoutButton from '@/components/LogoutButton';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState } from "react";
+import ImageUpload from "@/components/ImageUpload";
+import SymptomsQuestionnaire, { QuestionnaireResults } from "@/components/SymptomsQuestionnaire";
+import ResultDisplay from "@/components/ResultDisplay";
+import LogoutButton from "@/components/LogoutButton";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { History } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { History } from "lucide-react";
 
 enum ScreenState {
   UPLOAD,
@@ -17,7 +16,7 @@ enum ScreenState {
 }
 
 const Index = () => {
-  const { currentUser } = useAuth();
+  const { currentUser  } = useAuth();
   const navigate = useNavigate();
   const [currentScreen, setCurrentScreen] = useState<ScreenState>(ScreenState.UPLOAD);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
@@ -76,73 +75,55 @@ const Index = () => {
 
   // Background circles for design
   const renderBackgroundElements = () => (
-    <div className="absolute inset-0 overflow-hidden -z-10 opacity-50">
-      <div className="absolute top-0 left-0 w-96 h-96 bg-medical-100 rounded-full filter blur-3xl opacity-30 transform -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-medical-200 rounded-full filter blur-3xl opacity-30 transform translate-x-1/2 translate-y-1/2"></div>
+    <div className="absolute inset-0 overflow-hidden -z-10 opacity-30">
+      <div className="absolute top-0 left-0 w-96 h-96 bg-green-100 rounded-full filter blur-3xl opacity-30 transform -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-200 rounded-full filter blur-3xl opacity-30 transform translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-green-300 rounded-full filter blur-3xl opacity-20 transform -translate-x-1/2 -translate-y-1/2"></div>
     </div>
   );
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="relative min-h-screen flex flex-col bg-gray-50">
       {renderBackgroundElements()}
       
-      {/* Header */}
       <header className="w-full py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="glass px-6 py-4 rounded-2xl">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl sm:text-3xl font-medium">
-                <span className="text-medical-700">Chicken Pox</span> Symptom Assessment
+          <div className="bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
+            <div className="flex items-center justify-between mr-2">
+              <h1 className="text-2xl sm:text-4xl font-medium text-gray-800">
+                <span className="text-gray-800">Chicken Pox</span> <span className="text-gray-600">Symptoms Assessment</span>
               </h1>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 mx-4">
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => navigate('/history')}
-                  className="hidden sm:flex"
+                  className="hidden sm:flex text-gray-800 hover:text-black border-gray-600 hover:bg-gray-200"
                 >
-                  <History className="mr-2 h-4 w-4" />
-                  History
+                  <History className="mr-2" />
+                  View History
                 </Button>
-                <span className="text-sm text-gray-600 hidden sm:inline">
-                  Welcome, {currentUser?.displayName || 'User'}
-                </span>
                 <LogoutButton />
               </div>
             </div>
-            <p className="mt-2 text-gray-600">
-              Upload an image of the affected area and answer a few questions for a preliminary assessment
+            <p className="mt-3 text-gray-800 text-center font-semibold text-xl px-2 ">
+  Welcome, <span>{currentUser ?.displayName}</span>!
+</p>
+            <p className="mt-2 text-gray-600 text-center">
+              Upload an image of the affected area and answer a few questions for a preliminary assessment.
             </p>
-            <div className="mt-2 sm:hidden">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => navigate('/history')}
-                className="w-full"
-              >
-                <History className="mr-2 h-4 w-4" />
-                View Assessment History
-              </Button>
-            </div>
           </div>
         </div>
       </header>
-      
-      {/* Main content */}
-      <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="glass p-6 rounded-2xl">
-          {renderCurrentScreen()}
-        </div>
-      </main>
-      
-      {/* Footer */}
-      <footer className="w-full py-4 px-4 sm:px-6 lg:px-8 mt-auto">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center text-sm text-gray-500">
-            <p>This is a demonstration application. Always consult a healthcare professional for medical advice.</p>
+
+      {/* Main Content */}
+      <main className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-3xl"> {/* Width adjustment */}
+          <div className="glass rounded-2xl shadow-xl p-8 border border-white/20 backdrop-blur-lg bg-white/10">
+            {renderCurrentScreen()}
           </div>
         </div>
-      </footer>
+      </main>
     </div>
   );
 };

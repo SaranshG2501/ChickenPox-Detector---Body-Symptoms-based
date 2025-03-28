@@ -1,5 +1,4 @@
-
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, Camera, X } from 'lucide-react';
@@ -96,7 +95,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
       <CardContent className="p-6">
         <div
           className={`upload-area relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg transition-all
-            ${isDragging ? 'border-medical-600 bg-medical-100' : 'border-gray-200 hover:border-medical-400'}
+            ${isDragging ? 'border-black bg-green-100' : 'border-gray-200 hover:border-gray-400'}
             ${preview ? 'border-opacity-0' : 'border-opacity-100'}
           `}
           onDragOver={handleDragOver}
@@ -105,7 +104,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
         >
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-4">
-              <div className="w-10 h-10 border-4 border-medical-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-gray-800 border-t-transparent rounded-full animate-spin"></div>
               <p className="mt-4 text-sm text-gray-500">Processing image...</p>
             </div>
           ) : preview ? (
@@ -126,29 +125,28 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
             </div>
           ) : (
             <>
-              <div className="mb-4 p-4 bg-medical-100 text-medical-600 rounded-full">
+              <div className="mb-5 p-5 bg-gray-100 text-black rounded-full shadow-lg"> {/* Added shadow-lg */}
                 <Upload className="h-8 w-8" />
               </div>
-              <h3 className="mb-2 text-lg font-medium">Upload skin image</h3>
+              <h3 className="mb-2 text-lg font-medium text-gray-800">Upload skin image</h3>
               <p className="mb-6 text-sm text-center text-gray-500 max-w-xs">
                 Drag and drop your image here, or click to select a file
               </p>
               <div className="flex gap-3">
                 <Button 
-                  className="button-hover-effect"
+                  className="button-hover-effect text-lg px-4 py-3"
                   onClick={handleUploadClick}
                 >
-                  <Upload className="mr-2 h-4 w-4" />
+                  <Upload className="h-4 w-4" />
                   Upload
                 </Button>
                 <Button 
-                  variant="outline" 
-                  className="button-hover-effect"
-                  onClick={handleCaptureClick}
-                >
-                  <Camera className="mr-2 h-4 w-4" />
-                  Take Photo
-                </Button>
+  className="button-hover-effect text-lg px-4 py-3" // Increased padding and font size
+  onClick={handleCaptureClick}
+>
+  <Camera className=" h-5 w-5" /> {/* Increased icon size */}
+  Take Photo
+</Button>
               </div>
             </>
           )}

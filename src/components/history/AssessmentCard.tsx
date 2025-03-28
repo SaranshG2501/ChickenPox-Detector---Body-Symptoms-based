@@ -109,15 +109,16 @@ const AssessmentCard = ({
         </div>
       </CardContent>
       <CardFooter className="bg-gray-50 flex justify-end">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => onViewDetails(id)}
-        >
-          <Eye className="h-4 w-4 mr-1" />
-          View Details
-        </Button>
-      </CardFooter>
+  <Button 
+    variant="outline" 
+    size= "sm" 
+    className="mt-5" // Add margin-bottom to create space
+    onClick={() => onViewDetails(id)}
+  >
+    <Eye className="h-5 w-4 mr-1" />
+    View Details
+  </Button>
+</CardFooter>
     </Card>
   );
 };

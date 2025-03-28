@@ -1,40 +1,28 @@
-
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext"; // Import useAuth from your context
+import { toast } from "sonner"; // Import toast for notifications
+import { Button } from "@/components/ui/button"; // Import your Button component
 
 const LogoutButton = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { logout } = useAuth(); // Get the logout function from the auth context
 
   const handleLogout = async () => {
-    setIsLoading(true);
     try {
-      await logout();
-      toast.success("Logged out successfully");
-      navigate("/login");
+      await logout(); // Call the logout function
+      toast.success("Logged out successfully!"); // Show success message
     } catch (error) {
-      console.error("Logout error:", error);
-      toast.error("Failed to log out");
-    } finally {
-      setIsLoading(false);
+      console.error("Logout error:", error); // Log any errors
+      toast.error("Failed to log out. Please try again."); // Show error message
     }
   };
 
   return (
     <Button
-      variant="outline"
-      size="sm"
-      onClick={handleLogout}
-      disabled={isLoading}
-      className="gap-2"
+      variant="outline" // Use the outline variant to match the theme
+      size="sm" // Use a small size for consistency
+      onClick={handleLogout} // Call handleLogout on click
+      className="text-gray-800 hover:text-black border-gray-600 hover:bg-gray-200" // Update colors to match the theme
     >
-      <LogOut className="h-4 w-4" />
-      {isLoading ? "Logging out..." : "Logout"}
+      Logout
     </Button>
   );
 };
