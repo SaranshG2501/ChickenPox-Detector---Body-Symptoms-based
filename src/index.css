@@ -60,10 +60,6 @@
 
 /* Global Styles */
 @layer base {
-  * {
-    @apply border-b-blue-600;
-  }
-
   body {
     @apply bg-background text-foreground min-h-screen;
     font-feature-settings: "rlig" 1, "calt" 1;
