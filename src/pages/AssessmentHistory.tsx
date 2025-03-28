@@ -6,11 +6,17 @@ import { useAssessmentHistory } from '@/hooks/useAssessmentHistory';
 import HistoryPageHeader from '@/components/history/HistoryPageHeader';
 import HistoryPageFooter from '@/components/history/HistoryPageFooter';
 import AssessmentTabContent from '@/components/history/AssessmentTabContent';
+import { useEffect } from 'react';
 
 const AssessmentHistory = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { assessments, loading } = useAssessmentHistory(currentUser?.uid);
+
+  useEffect(() => {
+    console.log('AssessmentHistory component assessments:', assessments);
+    console.log('Current user ID:', currentUser?.uid);
+  }, [assessments, currentUser]);
 
   const viewAssessmentDetails = (id: string) => {
     navigate(`/assessment/${id}`);

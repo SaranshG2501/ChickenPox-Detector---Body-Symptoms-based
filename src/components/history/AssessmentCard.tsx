@@ -48,6 +48,19 @@ const AssessmentCard = ({
   formatTime,
   getLikelihoodBadge
 }: AssessmentCardProps) => {
+  console.log('Rendering AssessmentCard with data:', assessment);
+  
+  // Handle potentially missing data with defaults
+  const {
+    id = '',
+    analysis = { likelihood: 'unknown', score: 0, reasons: [], advice: '' },
+    imageUrl = null,
+    assessmentDate = new Date().toISOString(),
+  } = assessment;
+  
+  // Ensure reasons is an array
+  const reasons = Array.isArray(analysis.reasons) ? analysis.reasons : [];
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
@@ -56,21 +69,21 @@ const AssessmentCard = ({
             <CardTitle className="text-lg">Assessment Report</CardTitle>
             <CardDescription className="flex items-center mt-1">
               <CalendarIcon className="h-4 w-4 mr-1" />
-              {formatDate(assessment.assessmentDate)}
+              {formatDate(assessmentDate)}
               <span className="mx-1">•</span>
               <Clock className="h-4 w-4 mr-1" />
-              {formatTime(assessment.assessmentDate)}
+              {formatTime(assessmentDate)}
             </CardDescription>
           </div>
-          {getLikelihoodBadge(assessment.analysis.likelihood)}
+          {getLikelihoodBadge(analysis.likelihood)}
         </div>
       </CardHeader>
       <CardContent className="pb-4">
         <div className="flex gap-4">
-          {assessment.imageUrl && (
+          {imageUrl && (
             <div className="shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded overflow-hidden border">
               <img 
-                src={assessment.imageUrl} 
+                src={imageUrl} 
                 alt="Skin condition" 
                 className="w-full h-full object-cover"
               />
@@ -79,11 +92,17 @@ const AssessmentCard = ({
           <div>
             <h4 className="font-medium mb-1">Key Factors:</h4>
             <ul className="list-disc pl-5 text-sm space-y-0.5">
-              {assessment.analysis.reasons.slice(0, 3).map((reason, idx) => (
-                <li key={idx}>{reason}</li>
-              ))}
-              {assessment.analysis.reasons.length > 3 && (
-                <li className="text-gray-500">+ {assessment.analysis.reasons.length - 3} more factors</li>
+              {reasons.length > 0 ? (
+                <>
+                  {reasons.slice(0, 3).map((reason, idx) => (
+                    <li key={idx}>{reason}</li>
+                  ))}
+                  {reasons.length > 3 && (
+                    <li className="text-gray-500">+ {reasons.length - 3} more factors</li>
+                  )}
+                </>
+              ) : (
+                <li>No specific factors recorded</li>
               )}
             </ul>
           </div>
@@ -93,7 +112,7 @@ const AssessmentCard = ({
         <Button 
           variant="outline" 
           size="sm" 
-          onClick={() => onViewDetails(assessment.id)}
+          onClick={() => onViewDetails(id)}
         >
           <Eye className="h-4 w-4 mr-1" />
           View Details

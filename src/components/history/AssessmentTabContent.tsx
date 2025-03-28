@@ -17,12 +17,17 @@ const AssessmentTabContent: React.FC<AssessmentTabContentProps> = ({
   likelihood, 
   onViewDetails 
 }) => {
+  console.log('AssessmentTabContent received assessments:', assessments);
+  console.log('Filtering by likelihood:', likelihood);
+  
   // Filter assessments by likelihood if specified
   const filteredAssessments = likelihood 
-    ? assessments.filter(a => a.analysis.likelihood === likelihood)
+    ? assessments.filter(a => a.analysis && a.analysis.likelihood === likelihood)
     : assessments;
+    
+  console.log('Filtered assessments:', filteredAssessments);
 
-  if (filteredAssessments.length === 0) {
+  if (!filteredAssessments || filteredAssessments.length === 0) {
     return <EmptyHistoryCard />;
   }
 
