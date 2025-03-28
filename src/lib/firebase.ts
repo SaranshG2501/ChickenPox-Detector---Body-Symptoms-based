@@ -1,3 +1,4 @@
+
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -68,6 +69,8 @@ export async function saveAssessment(userId: string, data: Record<string, unknow
 // Function to get user's assessment history
 export async function getUserAssessments(userId: string) {
   try {
+    console.log(`Fetching assessments for user: ${userId}`);
+    
     // First try with compound query (requires index)
     try {
       const q = query(
@@ -76,7 +79,9 @@ export async function getUserAssessments(userId: string) {
         orderBy("createdAt", "desc")
       );
       
+      console.log("Executing compound query with ordering");
       const querySnapshot = await getDocs(q);
+      console.log(`Found ${querySnapshot.docs.length} assessments with compound query`);
       return processAssessmentDocs(querySnapshot);
     } catch (error: any) {
       console.warn("Compound query failed, falling back to simple query:", error.message);
@@ -87,7 +92,9 @@ export async function getUserAssessments(userId: string) {
         where("userId", "==", userId)
       );
       
+      console.log("Executing simple query without ordering");
       const querySnapshot = await getDocs(q);
+      console.log(`Found ${querySnapshot.docs.length} assessments with simple query`);
       const assessments = processAssessmentDocs(querySnapshot);
       
       // Sort in memory instead
@@ -106,8 +113,10 @@ export async function getUserAssessments(userId: string) {
 
 // Helper function to process assessment documents
 function processAssessmentDocs(querySnapshot: any) {
+  console.log("Processing assessment documents");
   return querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
+    console.log(`Processing assessment document: ${doc.id}`, data);
     return {
       id: doc.id,
       questionnaire: data.questionnaire || {},
@@ -119,7 +128,8 @@ function processAssessmentDocs(querySnapshot: any) {
       },
       imageUrl: data.imageUrl || null,
       assessmentDate: data.assessmentDate || new Date().toISOString(),
-      createdAt: data.createdAt || null
+      createdAt: data.createdAt || null,
+      userId: data.userId || null
     };
   });
 }

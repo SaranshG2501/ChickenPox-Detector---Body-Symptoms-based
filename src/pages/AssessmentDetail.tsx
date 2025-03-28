@@ -15,7 +15,7 @@ import { Printer } from 'lucide-react';
 const AssessmentDetail = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
-  const [assessment, setAssessment] = useState(null);
+  const [assessment, setAssessment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const componentRef = useRef<HTMLDivElement>(null);
@@ -30,20 +30,29 @@ const AssessmentDetail = () => {
       }
       
       try {
-        const assessmentRef = doc(db, `users/${currentUser.uid}/assessments`, id);
+        // Changed reference path - now looking directly in the assessments collection
+        const assessmentRef = doc(db, "assessments", id);
         const assessmentDoc = await getDoc(assessmentRef);
         
         if (assessmentDoc.exists()) {
-          setAssessment({
-            id: assessmentDoc.id,
-            ...assessmentDoc.data()
-          });
+          // Verify this is the current user's assessment
+          const assessmentData = assessmentDoc.data();
+          if (assessmentData.userId === currentUser.uid) {
+            setAssessment({
+              id: assessmentDoc.id,
+              ...assessmentData
+            });
+            console.log("Assessment found:", assessmentData);
+          } else {
+            setError("Access denied: This assessment belongs to another user");
+          }
         } else {
           setError("Assessment not found");
+          console.log(`No assessment found with ID: ${id}`);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching assessment:", err);
-        setError("Error loading assessment");
+        setError("Error loading assessment: " + (err.message || "Unknown error"));
         toast.error("Failed to load assessment details");
       } finally {
         setLoading(false);
@@ -79,15 +88,36 @@ const AssessmentDetail = () => {
     );
   }
   
-  // Format the date for display
-  const assessmentDate = new Date(assessment.timestamp.seconds * 1000);
-  const formattedDate = assessmentDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  // Format the date for display - handle different date formats
+  let assessmentDate;
+  let formattedDate;
+  
+  try {
+    // Check if createdAt is a Firestore timestamp
+    if (assessment.createdAt && typeof assessment.createdAt.toDate === 'function') {
+      assessmentDate = assessment.createdAt.toDate();
+    } 
+    // Check if assessmentDate exists and use it
+    else if (assessment.assessmentDate) {
+      assessmentDate = new Date(assessment.assessmentDate);
+    } 
+    // Fallback to current date
+    else {
+      assessmentDate = new Date();
+    }
+
+    formattedDate = assessmentDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (err) {
+    console.error("Error formatting date:", err);
+    formattedDate = "Unknown date";
+    assessmentDate = new Date();
+  }
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -97,10 +127,10 @@ const AssessmentDetail = () => {
         <div ref={componentRef} className="space-y-6">
           {/* Assessment Result Card */}
           <AssessmentResultCard
-            likelihood={assessment.result.likelihood}
-            score={assessment.result.score}
-            reasons={assessment.result.reasons}
-            advice={assessment.result.advice}
+            likelihood={assessment.analysis?.likelihood || 'unknown'}
+            score={assessment.analysis?.score || 0}
+            reasons={assessment.analysis?.reasons || []}
+            advice={assessment.analysis?.advice || ''}
             imageUrl={assessment.imageUrl}
             assessmentDate={assessmentDate.toString()}
             formattedDate={formattedDate}
@@ -108,7 +138,7 @@ const AssessmentDetail = () => {
           />
           
           {/* Questionnaire Responses Card */}
-          <QuestionnaireResponsesCard questionnaire={assessment.questionnaire} />
+          <QuestionnaireResponsesCard questionnaire={assessment.questionnaire || {}} />
           
           {/* Disclaimer Card */}
           <DisclaimerCard />

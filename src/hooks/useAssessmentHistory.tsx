@@ -20,6 +20,7 @@ export const useAssessmentHistory = (currentUserId: string | undefined) => {
       try {
         setLoading(true);
         setError(null);
+        console.log(`Fetching assessments for user ID: ${currentUserId}`);
         const userAssessments = await getUserAssessments(currentUserId);
         console.log('Fetched assessments from Firebase:', userAssessments);
         

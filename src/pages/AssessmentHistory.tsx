@@ -22,6 +22,7 @@ const AssessmentHistory = () => {
   }, [assessments, currentUser]);
 
   const viewAssessmentDetails = (id: string) => {
+    console.log(`Navigating to assessment detail with ID: ${id}`);
     navigate(`/assessment/${id}`);
   };
 
