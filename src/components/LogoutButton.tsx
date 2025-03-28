@@ -20,7 +20,7 @@ const LogoutButton = () => {
       variant="outline" // Use the outline variant to match the theme
       size="sm" // Use a small size for consistency
       onClick={handleLogout} // Call handleLogout on click
-      className="text-gray-800 hover:text-black border-gray-600 hover:bg-gray-200" // Update colors to match the theme
+      className="block sm:flex text-gray-800 hover:text-black border-gray-600 hover:bg-gray-200" // Update colors to match the theme
     >
       Logout
     </Button>
