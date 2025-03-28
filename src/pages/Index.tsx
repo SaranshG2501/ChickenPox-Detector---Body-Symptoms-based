@@ -98,7 +98,7 @@ const Index = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => navigate('/history')}
-                  className="block sm:flex text-gray-800 hover:text-black border-gray-600 hover:bg-gray-200"
+                  className="flex text-gray-800 hover:text-black border-gray-600 hover:bg-gray-200"
                 >
                   <History className="mr-2" />
                   View History
