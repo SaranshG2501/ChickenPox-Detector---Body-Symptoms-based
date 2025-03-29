@@ -1,7 +1,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle, HelpCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, HelpCircle, Activity } from 'lucide-react';
 import { AnalysisResult } from "./AnalysisResult";
 
 interface ResultHeaderProps {
@@ -45,10 +45,18 @@ const ResultHeader = ({ result }: ResultHeaderProps) => {
           {current.icon}
           <CardTitle className="ml-2 text-xl">{current.title}</CardTitle>
         </div>
-        {current.badge}
+        <div className="flex items-center gap-2">
+          {result.aiConfidence !== undefined && (
+            <Badge className="bg-blue-500 flex items-center gap-1">
+              <Activity className="h-3 w-3" />
+              AI: {result.aiConfidence.toFixed(1)}%
+            </Badge>
+          )}
+          {current.badge}
+        </div>
       </div>
       <CardDescription className="mt-2">
-        This assessment is based on the information you provided and image analysis.
+        This assessment is based on your symptom information and AI analysis of the uploaded image.
       </CardDescription>
     </CardHeader>
   );

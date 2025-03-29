@@ -1,10 +1,41 @@
-
 import { QuestionnaireResults } from '../SymptomsQuestionnaire';
 import { AnalysisResult } from './AnalysisResult';
+import { RoboflowResponse } from '../../services/roboflowService';
 
-export function analyzeResults(results: QuestionnaireResults): AnalysisResult {
+export function analyzeResults(
+  results: QuestionnaireResults,
+  imageAnalysis?: RoboflowResponse
+): AnalysisResult {
   let score = 0;
   const reasons: string[] = [];
+  
+  if (imageAnalysis && imageAnalysis.predictions && imageAnalysis.predictions.length > 0) {
+    const chickenpoxPredictions = imageAnalysis.predictions.filter(
+      pred => pred.class.toLowerCase().includes('chicken') || 
+             pred.class.toLowerCase().includes('pox')
+    );
+    
+    if (chickenpoxPredictions.length > 0) {
+      const maxConfidence = Math.max(...chickenpoxPredictions.map(pred => pred.confidence));
+      
+      if (maxConfidence > 0.7) {
+        score += 5;
+        reasons.push(`AI model detected chickenpox with high confidence (${(maxConfidence * 100).toFixed(1)}%)`);
+      } else if (maxConfidence > 0.4) {
+        score += 3;
+        reasons.push(`AI model detected possible chickenpox (${(maxConfidence * 100).toFixed(1)}%)`);
+      } else if (maxConfidence > 0.2) {
+        score += 1;
+        reasons.push(`AI model detected low possibility of chickenpox (${(maxConfidence * 100).toFixed(1)}%)`);
+      }
+    } else if (imageAnalysis.predictions.length > 0) {
+      const otherConditions = [...new Set(imageAnalysis.predictions.map(pred => pred.class))];
+      if (otherConditions.length > 0) {
+        score -= 2;
+        reasons.push(`AI model detected other skin condition(s): ${otherConditions.join(', ')}`);
+      }
+    }
+  }
   
   if (results.fever === 'high') {
     score += 3;
@@ -92,20 +123,75 @@ export function analyzeResults(results: QuestionnaireResults): AnalysisResult {
   
   let likelihood: 'high' | 'medium' | 'low' | 'unknown' = 'unknown';
   let advice = '';
+  let aiConfidence: number | null = null;
+  let alternativeDiagnoses: string[] = [];
+  
+  if (imageAnalysis && imageAnalysis.predictions) {
+    const chickenpoxPredictions = imageAnalysis.predictions.filter(
+      pred => pred.class.toLowerCase().includes('chicken') || 
+              pred.class.toLowerCase().includes('pox')
+    );
+    
+    if (chickenpoxPredictions.length > 0) {
+      aiConfidence = Math.max(...chickenpoxPredictions.map(pred => pred.confidence)) * 100;
+    }
+    
+    alternativeDiagnoses = [...new Set(
+      imageAnalysis.predictions
+        .filter(pred => !(pred.class.toLowerCase().includes('chicken') || 
+                         pred.class.toLowerCase().includes('pox')))
+        .map(pred => pred.class)
+    )];
+  }
   
   if (score >= 10) {
     likelihood = 'high';
     advice = "The symptoms you've described align strongly with chicken pox. We recommend consulting a healthcare provider as soon as possible for confirmation and treatment. Avoid contact with others, especially pregnant women, newborns, and immunocompromised individuals.";
+    
+    if (aiConfidence !== null) {
+      advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
+    }
   } else if (score >= 6) {
     likelihood = 'medium';
     advice = "Your symptoms have some features consistent with chicken pox. We recommend consulting a healthcare provider for proper diagnosis and advice. In the meantime, avoid close contact with others and monitor for any changes in symptoms.";
+    
+    if (aiConfidence !== null) {
+      advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
+    }
   } else if (score >= 0) {
     likelihood = 'low';
-    advice = "Your symptoms have few features typically associated with chicken pox, but a healthcare provider should evaluate any rash or concerning symptoms. There are many conditions that can cause rashes, and professional diagnosis is important.";
+    advice = "Your symptoms have few features typically associated with chicken pox, but a healthcare provider should evaluate any rash or concerning symptoms.";
+    
+    if (aiConfidence !== null) {
+      advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
+    }
+    
+    if (alternativeDiagnoses.length > 0) {
+      advice += ` The AI model suggests your rash might be related to: ${alternativeDiagnoses.join(', ')}.`;
+    }
+    
+    advice += " There are many conditions that can cause rashes, and professional diagnosis is important.";
   } else {
     likelihood = 'unknown';
-    advice = "Based on the information provided, we cannot determine if chicken pox is likely. These symptoms leads to some other catagories of diseases for which we recommend you to consult a doctor.";
+    advice = "Based on the information provided, we cannot determine if chicken pox is likely.";
+    
+    if (aiConfidence !== null) {
+      advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
+    }
+    
+    if (alternativeDiagnoses.length > 0) {
+      advice += ` The AI model suggests your symptoms might be related to: ${alternativeDiagnoses.join(', ')}.`;
+    }
+    
+    advice += " These symptoms may point to other categories of diseases for which we recommend you consult a doctor.";
   }
   
-  return { likelihood, score, reasons, advice };
+  return { 
+    likelihood, 
+    score, 
+    reasons, 
+    advice, 
+    aiConfidence: aiConfidence !== null ? aiConfidence : undefined,
+    alternativeDiagnoses: alternativeDiagnoses.length > 0 ? alternativeDiagnoses : undefined
+  };
 }

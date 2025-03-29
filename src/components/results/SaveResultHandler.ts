@@ -1,6 +1,7 @@
 
 import { QuestionnaireResults } from "../SymptomsQuestionnaire";
 import { AnalysisResult } from "./AnalysisResult";
+import { RoboflowResponse } from "../../services/roboflowService";
 import { saveAssessment, convertImageToBase64 } from "@/lib/firebase";
 import { toast } from "sonner";
 
@@ -9,12 +10,14 @@ export async function handleSaveAssessment({
   imageFile,
   results,
   analysisResult,
+  imageAnalysisResults,
   onSuccess
 }: {
   currentUserId: string;
   imageFile: File | null;
   results: QuestionnaireResults;
   analysisResult: AnalysisResult;
+  imageAnalysisResults?: RoboflowResponse | null;
   onSuccess: () => void;
 }) {
   try {
@@ -29,9 +32,12 @@ export async function handleSaveAssessment({
         likelihood: analysisResult.likelihood,
         score: analysisResult.score,
         reasons: analysisResult.reasons,
-        advice: analysisResult.advice
+        advice: analysisResult.advice,
+        aiConfidence: analysisResult.aiConfidence,
+        alternativeDiagnoses: analysisResult.alternativeDiagnoses
       },
-      imageUrl: imageBase64, // Changed from imageData to imageUrl to match what history page expects
+      imageUrl: imageBase64,
+      imageAnalysis: imageAnalysisResults || null,
       assessmentDate: new Date().toISOString()
     };
 
