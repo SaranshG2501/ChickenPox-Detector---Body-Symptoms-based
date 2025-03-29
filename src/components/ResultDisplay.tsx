@@ -108,15 +108,15 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
       ) : (
         <Card className={`w-full border-2 mb-6 ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
           {imageLoaded && imagePreview && (
-            <div className="flex justify-center p-2 bg-gray-100 border-b border-gray-200">
-              <p className="text-gray-800 flex items-center font-medium">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                Image loaded and analyzed successfully
-              </p>
-            </div>
-          )}
+  <div className="flex justify-center p-1 bg-gray-100 border-2 mt-2 border-gray-800 w-3/4 mx-auto rounded-lg"> {/* Adjusted to border-2 */}
+    <p className="text-gray-800 flex items-center font-medium">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-800" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+      </svg>
+      Image loaded and analyzed successfully
+    </p>
+  </div>
+)}
           <ResultHeader result={result} />
           <ResultContent 
             result={result} 
