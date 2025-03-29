@@ -26,16 +26,20 @@ export async function handleSaveAssessment({
       imageBase64 = await convertImageToBase64(imageFile);
     }
 
+    // Create a safe version of the analysis data that doesn't include undefined values
+    const analysisData = {
+      likelihood: analysisResult.likelihood,
+      score: analysisResult.score,
+      reasons: analysisResult.reasons,
+      advice: analysisResult.advice,
+      // Only include these fields if they're defined
+      ...(analysisResult.aiConfidence !== undefined && { aiConfidence: analysisResult.aiConfidence }),
+      ...(analysisResult.alternativeDiagnoses !== undefined && { alternativeDiagnoses: analysisResult.alternativeDiagnoses })
+    };
+
     const assessmentData = {
       questionnaire: results,
-      analysis: {
-        likelihood: analysisResult.likelihood,
-        score: analysisResult.score,
-        reasons: analysisResult.reasons,
-        advice: analysisResult.advice,
-        aiConfidence: analysisResult.aiConfidence,
-        alternativeDiagnoses: analysisResult.alternativeDiagnoses
-      },
+      analysis: analysisData,
       imageUrl: imageBase64,
       imageAnalysis: imageAnalysisResults || null,
       assessmentDate: new Date().toISOString()

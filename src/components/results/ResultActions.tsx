@@ -22,6 +22,7 @@ const ResultActions = ({ onRestart, onSave, isSaving, isSaved }: ResultActionsPr
           variant={isSaved ? "outline" : "default"} 
           onClick={onSave} 
           disabled={isSaving || isSaved}
+          className={isSaved ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:text-green-800" : ""}
         >
           {isSaved ? (
             <>

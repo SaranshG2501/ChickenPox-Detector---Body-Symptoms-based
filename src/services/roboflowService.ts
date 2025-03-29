@@ -39,10 +39,25 @@ export async function analyzeImageWithRoboflow(imageBase64: string): Promise<Rob
     });
     
     console.log("Roboflow API response received:", response.data);
+    
+    // If the API doesn't return predictions, provide a default structure
+    if (!response.data.predictions) {
+      response.data.predictions = [];
+    }
+    
     return response.data;
   } catch (error) {
     console.error("Error analyzing image with Roboflow:", error);
-    throw error;
+    
+    // Return a default response structure on error to prevent null/undefined issues
+    return {
+      predictions: [],
+      time: 0,
+      image: {
+        width: 0,
+        height: 0
+      }
+    };
   }
 }
 

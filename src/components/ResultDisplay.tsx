@@ -26,6 +26,7 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [imageAnalysisResults, setImageAnalysisResults] = useState<RoboflowResponse | null>(null);
   const [analyzeError, setAnalyzeError] = useState<boolean>(false);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   
   useEffect(() => {
     const analyzeImage = async () => {
@@ -36,10 +37,19 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
       
       try {
         setIsAnalyzing(true);
+        setImageLoaded(false);
         setAnalyzeError(false);
+        
+        // First show a message that image is being processed
+        toast.info("Processing your image...");
+        
         // Analyze image with Roboflow API
         const analysis = await analyzeImageWithRoboflow(imagePreview);
         setImageAnalysisResults(analysis);
+        setImageLoaded(true);
+        
+        // Show message that image is loaded
+        toast.success("Image analysis complete!");
         console.log("Image analysis complete:", analysis);
       } catch (error) {
         console.error("Error analyzing image:", error);
@@ -97,6 +107,16 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
         </Card>
       ) : (
         <Card className={`w-full border-2 mb-6 ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
+          {imageLoaded && imagePreview && (
+            <div className="flex justify-center p-2 bg-green-100 border-b border-green-200">
+              <p className="text-green-700 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                Image loaded and analyzed
+              </p>
+            </div>
+          )}
           <ResultHeader result={result} />
           <ResultContent 
             result={result} 
