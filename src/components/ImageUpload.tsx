@@ -128,7 +128,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
               <div className="mb-5 p-5 bg-gray-100 text-black rounded-full shadow-lg"> {/* Added shadow-lg */}
                 <Upload className="h-8 w-8" />
               </div>
-              <h3 className="mb-2 text-lg font-medium text-gray-800">Upload skin image</h3>
+              <h3 className="mb-2 text-lg font-medium text-gray-800">Upload Skin Image</h3>
               <p className="mb-6 text-sm text-center text-gray-500 max-w-xs">
                 Drag and drop your image here, or click to select a file
               </p>
