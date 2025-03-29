@@ -25,6 +25,7 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
   const [isSaved, setIsSaved] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [imageAnalysisResults, setImageAnalysisResults] = useState<RoboflowResponse | null>(null);
+  const [analyzeError, setAnalyzeError] = useState<boolean>(false);
   
   useEffect(() => {
     const analyzeImage = async () => {
@@ -35,12 +36,14 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
       
       try {
         setIsAnalyzing(true);
+        setAnalyzeError(false);
         // Analyze image with Roboflow API
         const analysis = await analyzeImageWithRoboflow(imagePreview);
         setImageAnalysisResults(analysis);
         console.log("Image analysis complete:", analysis);
       } catch (error) {
         console.error("Error analyzing image:", error);
+        setAnalyzeError(true);
         toast.error("There was an error analyzing your image. Results will be based only on your symptoms.");
       } finally {
         setIsAnalyzing(false);
@@ -94,7 +97,11 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
       ) : (
         <Card className={`w-full border-2 mb-6 ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
           <ResultHeader result={result} />
-          <ResultContent result={result} imagePreview={imagePreview} imageAnalysisResults={imageAnalysisResults} />
+          <ResultContent 
+            result={result} 
+            imagePreview={imagePreview} 
+            imageAnalysisResults={imageAnalysisResults}
+          />
           <ResultActions 
             onRestart={onRestart} 
             onSave={saveResult}

@@ -1,7 +1,7 @@
 
 import { CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, RefreshCw, Save } from 'lucide-react';
+import { ExternalLink, RefreshCw, Save, Check } from 'lucide-react';
 
 interface ResultActionsProps {
   onRestart: () => void;
@@ -19,12 +19,21 @@ const ResultActions = ({ onRestart, onSave, isSaving, isSaved }: ResultActionsPr
           Start New Assessment
         </Button>
         <Button 
-          variant="outline" 
+          variant={isSaved ? "outline" : "default"} 
           onClick={onSave} 
           disabled={isSaving || isSaved}
         >
-          <Save className="mr-2 h-4 w-4" />
-          {isSaving ? 'Saving...' : isSaved ? 'Saved' : 'Save Results'}
+          {isSaved ? (
+            <>
+              <Check className="mr-2 h-4 w-4" />
+              Result Saved
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? 'Saving...' : 'Save Results'}
+            </>
+          )}
         </Button>
       </div>
       <Button>

@@ -42,8 +42,8 @@ export async function handleSaveAssessment({
     };
 
     await saveAssessment(currentUserId, assessmentData);
-    onSuccess();
     toast.success("Assessment saved successfully!");
+    onSuccess();
     
     return true;
   } catch (error) {

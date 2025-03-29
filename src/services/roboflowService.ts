@@ -20,20 +20,25 @@ export interface RoboflowResponse {
 export async function analyzeImageWithRoboflow(imageBase64: string): Promise<RoboflowResponse> {
   try {
     // Remove data URL prefix if present
-    const base64Image = imageBase64.includes('base64,') 
+    const base64Data = imageBase64.includes('base64,') 
       ? imageBase64.split('base64,')[1] 
       : imageBase64;
+    
+    console.log("Sending image to Roboflow API...");
     
     const response = await axios({
       method: "POST",
       url: "https://detect.roboflow.com/chicken-pox/1",
       params: {
-        api_key: "nHfr6n14LpthNDMn75aF",
-        image: base64Image
+        api_key: "nHfr6n14LpthNDMn75aF"
+      },
+      data: base64Data,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
       }
     });
     
-    console.log("Roboflow API response:", response.data);
+    console.log("Roboflow API response received:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error analyzing image with Roboflow:", error);
