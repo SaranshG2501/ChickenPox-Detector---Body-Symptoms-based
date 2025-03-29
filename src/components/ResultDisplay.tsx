@@ -78,6 +78,7 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
     } catch (error) {
       setIsSaving(false);
       console.error("Error in save operation:", error);
+      toast.error("Unable to save the result. Please try again.");
     }
   };
   

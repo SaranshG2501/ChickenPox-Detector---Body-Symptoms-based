@@ -15,35 +15,52 @@ const ResultContent = ({ result, imagePreview, imageAnalysisResults }: ResultCon
     <CardContent className="pb-2">
       <div className="space-y-4">
         {result.aiConfidence !== undefined && (
-          <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="font-medium mb-2 flex items-center">
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 16H12.01M12 8V12M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              AI Analysis Results
-            </h3>
-            <div className="mb-2">
-              <div className="flex justify-between mb-1">
-                <span className="text-sm font-medium">Chickenpox confidence:</span>
-                <span className="text-sm font-semibold">{result.aiConfidence.toFixed(1)}%</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <h3 className="font-medium mb-2 flex items-center">
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 16H12.01M12 8V12M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                AI Analysis Results
+              </h3>
+              <div className="mb-2">
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Chickenpox confidence:</span>
+                  <span className="text-sm font-semibold">{result.aiConfidence.toFixed(1)}%</span>
+                </div>
+                <Progress value={result.aiConfidence} className="h-2" />
               </div>
-              <Progress value={result.aiConfidence} className="h-2" />
+              
+              <p className="text-xs text-gray-500 mt-2">
+                *AI analysis is based on the uploaded image.
+              </p>
             </div>
             
-            {result.alternativeDiagnoses && result.alternativeDiagnoses.length > 0 && (
-              <div className="mt-3">
-                <p className="text-sm font-medium mb-1">Other conditions detected:</p>
-                <ul className="text-sm list-disc pl-5">
-                  {result.alternativeDiagnoses.map((condition, index) => (
-                    <li key={index}>{condition}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            <p className="text-xs text-gray-500 mt-2">
-              *AI analysis is based on the uploaded image and should be interpreted by a healthcare professional.
-            </p>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="font-medium mb-2 flex items-center">
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Model Predictions
+              </h3>
+              
+              {result.alternativeDiagnoses && result.alternativeDiagnoses.length > 0 ? (
+                <div>
+                  <p className="text-sm font-medium mb-1">Other possible conditions:</p>
+                  <ul className="text-sm list-disc pl-5">
+                    {result.alternativeDiagnoses.map((condition, index) => (
+                      <li key={index}>{condition}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <p className="text-sm">No alternative conditions detected.</p>
+              )}
+              
+              <p className="text-xs text-gray-500 mt-2">
+                *These predictions should be interpreted by a healthcare professional.
+              </p>
+            </div>
           </div>
         )}
         
