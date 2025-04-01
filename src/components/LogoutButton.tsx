@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -24,9 +23,9 @@ const LogoutButton = () => {
       variant="outline"
       size="sm"
       onClick={handleLogout}
-      className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors"
+      className={`flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors h-8 sm:h-9 ${isMobile ? 'px-2 sm:px-3' : 'px-3'}`}
     >
-      <LogOut className={"h-4 w-4 mr-0 sm:mr-2"} />
+      <LogOut className={`h-4 w-4 ${!isMobile ? 'mr-0 sm:mr-2' : ''}`} />
       {!isMobile && <span className="hidden sm:inline">Logout</span>}
       {isMobile && <span className="sr-only">Logout</span>}
     </Button>
