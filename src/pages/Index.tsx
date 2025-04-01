@@ -101,8 +101,9 @@ import { useState } from "react";
                    onClick={() => navigate('/history')}
                    className={`flex items-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 h-8 sm:h-9 ${isMobile ? 'px-2 sm:px-3' : 'px-3'}`}
                  >
-                  <History className="h-4 w-4 mr-0 sm:mr-2" />
-                   <span className={isMobile ? "sr-only sm:inline" : ""}>History</span>
+                  <History className={`h-4 w-4 ${!isMobile ? 'mr-1.5 sm:mr-2' : ''}`} />
+     {!isMobile && <span className="hidden sm:inline">History</span>}
+     {isMobile && <span className="sr-only">History</span>}
                  </Button>
                  <LogoutButton />
                </div>
