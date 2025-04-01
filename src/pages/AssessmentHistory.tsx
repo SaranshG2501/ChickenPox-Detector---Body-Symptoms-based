@@ -90,7 +90,7 @@ const AssessmentHistory = () => {
             <TabsList className="mb-3 sm:mb-4 grid grid-cols-4 gap-0.5 sm:gap-1 h-8 sm:h-10">
               <TabsTrigger value="all" className="text-[10px] sm:text-xs py-1 sm:py-1.5">All</TabsTrigger>
               <TabsTrigger value="high" className="text-[10px] sm:text-xs py-1 sm:py-1.5">High Risk</TabsTrigger>
-              <TabsTrigger value="medium" className="text-[10px] sm:text-xs py-1 sm:py-1.5">Medium</TabsTrigger>
+              <TabsTrigger value="medium" className="text-[10px] sm:text-xs py-1 sm:py-1.5">Medium Risk</TabsTrigger>
               <TabsTrigger value="low" className="text-[10px] sm:text-xs py-1 sm:py-1.5">Low Risk</TabsTrigger>
             </TabsList>
             

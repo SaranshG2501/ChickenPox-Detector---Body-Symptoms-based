@@ -1,92 +1,83 @@
-
+import axios from 'axios';
 import { toast } from "sonner";
 
+
 export interface RoboflowResponse {
-  inference_id: string;
-  time: number;
-  image: {
-    width: number;
-    height: number;
-  };
-  predictions: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    confidence: number;
+  predictions: Array<{
     class: string;
-    class_id: number;
-    detection_id: string;
-  }[];
-}
-
-// Hardcoded API key for demo purposes
-// In production, this should be secured properly through environment variables
-const ROBOFLOW_API_KEY = "0oGS7PsRgRK8rPSfALhm";
-const MODEL_ID = "chicken-pox/1";
-const ENDPOINT = `https://detect.roboflow.com/${MODEL_ID}`;
-
-export const analyzeImageWithRoboflow = async (imageData: string): Promise<RoboflowResponse> => {
-  try {
-    console.info("Sending image to Roboflow API...");
-    
-    // Format the image data (remove data:image/jpeg;base64, prefix if it exists)
-    const formattedImageData = imageData.includes('base64,') 
-      ? imageData.split('base64,')[1] 
-      : imageData;
-    
-    console.log("Calling Roboflow API at:", ENDPOINT);
-    
-    const response = await fetch(`${ENDPOINT}?api_key=${ROBOFLOW_API_KEY}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: formattedImageData
-    });
-    
-    console.log("Roboflow API response status:", response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Roboflow API error: ${response.status} ${response.statusText}`, errorText);
-      throw new Error(`Image analysis failed: ${response.status} ${response.statusText}`);
-    }
-    
-    const data = await response.json() as RoboflowResponse;
-    
-    // Log all conditions the model can predict
-    console.info("Roboflow API response received:", data);
-    console.log("Classes detected by model:", data.predictions.map(p => p.class));
-    
-    return data;
-  } catch (error: any) {
-    // More detailed error logging
-    console.error("Error calling Roboflow:", error);
-    const errorMessage = error?.message || "Unknown error occurred during image analysis";
-    toast.error("There was an error analyzing your image. Results will be based only on your symptoms.");
-    
-    // Return a mock response instead of throwing an error
-    // This allows the app to continue even if the API call fails
-    return {
-      inference_id: "error",
+    confidence: number;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+  }>;
+  time: number;
+   image: {
+     width: number;
+     height: number;
+   };
+  }
+ 
+  export async function analyzeImageWithRoboflow(imageBase64: string): Promise<RoboflowResponse> {
+    try {
+      // Remove data URL prefix if present
+      const base64Data = imageBase64.includes('base64,') 
+        ? imageBase64.split('base64,')[1] 
+        : imageBase64;
+        console.log("Sending image to Roboflow API...");
+        const response = await axios({
+          method: "POST",
+          url: "https://detect.roboflow.com/chicken-pox/1",
+          params: {
+            api_key: "nHfr6n14LpthNDMn75aF"
+          },
+          data: base64Data,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          }
+        });
+ 
+        console.log("Roboflow API response received:", response.data);
+        
+        // If the API doesn't return predictions, provide a default structure
+        if (!response.data.predictions) {
+          response.data.predictions = [];
+        }
+ 
+        return response.data;
+      } catch (error) {
+        console.error("Error analyzing image with Roboflow:", error);
+        // Return a default response structure on error to prevent null/undefined issues
+     return {
+      predictions: [],
       time: 0,
       image: {
         width: 0,
         height: 0
-      },
-      predictions: []
+      }
     };
   }
-};
+}
 
-export const getPossibleConditions = (response: RoboflowResponse): string[] => {
-  if (!response || !response.predictions || !Array.isArray(response.predictions)) {
-    return [];
-  }
+export function getChickenpoxConfidence(data: RoboflowResponse): number {
+  // Find chickenpox class predictions
+  const chickenpoxPredictions = data.predictions.filter(
+    pred => pred.class.toLowerCase().includes('chicken') || 
+           pred.class.toLowerCase().includes('pox')
+  );
   
-  // Extract all predicted classes that are not related to chickenpox
-  return response.predictions
-    .filter(prediction => !prediction.class.toLowerCase().includes('chicken') && !prediction.class.toLowerCase().includes('pox'))
-    .map(prediction => prediction.class);
-};
+  // If no chickenpox predictions, return 0
+  if (chickenpoxPredictions.length === 0) return 0;
+  
+  // Return the highest confidence among chickenpox predictions
+  return Math.max(...chickenpoxPredictions.map(pred => pred.confidence)) * 100;
+}
+export function getPossibleConditions(data: RoboflowResponse): string[] {
+  // Extract unique classes from predictions that are not chickenpox
+  const conditions = data.predictions
+    .filter(pred => !(pred.class.toLowerCase().includes('chicken') || 
+                     pred.class.toLowerCase().includes('pox')))
+    .map(pred => pred.class);
+    // Return unique conditions
+   return [...new Set(conditions)];
+  }
