@@ -11,6 +11,8 @@ import ResultActions from './results/ResultActions';
 import DisclaimerComponent from './results/DisclaimerComponent';
 import { handleSaveAssessment } from './results/SaveResultHandler';
 import { analyzeImageWithRoboflow, RoboflowResponse } from '../services/roboflowService';
+import { Check } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResultDisplayProps {
   results: QuestionnaireResults;
@@ -21,6 +23,7 @@ interface ResultDisplayProps {
 
 const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDisplayProps) => {
   const { currentUser } = useAuth();
+  const isMobile = useIsMobile();
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
@@ -95,26 +98,28 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
   return (
     <div className="animate-slide-up">
       {isAnalyzing ? (
-        <Card className="w-full p-4 sm:p-6 border-2 mb-4 sm:mb-6 bg-white shadow-md">
-          <div className="flex flex-col items-center justify-center py-6 sm:py-8">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <h3 className="text-lg sm:text-xl font-medium text-gray-800 mb-2">Analyzing your image...</h3>
-            <p className="text-sm sm:text-base text-gray-600 text-center px-2 sm:px-0">
+        <Card className="w-full p-3 sm:p-6 border-2 mb-3 sm:mb-6 bg-white shadow-md">
+          <div className="flex flex-col items-center justify-center py-4 sm:py-8">
+            <div className="w-10 h-10 sm:w-16 sm:h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-3 sm:mb-4"></div>
+            <h3 className="text-base sm:text-xl font-medium text-gray-800 mb-1 sm:mb-2">Analyzing your image...</h3>
+            <p className="text-xs sm:text-base text-gray-600 text-center px-2">
               Our AI model is examining your uploaded image for signs of chickenpox.
               This may take a few moments.
             </p>
           </div>
         </Card>
       ) : (
-        <Card className={`w-full border-2 mb-4 sm:mb-6 shadow-md ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
+        <Card className={`w-full border-2 mb-3 sm:mb-6 shadow-md ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
           {imageLoaded && imagePreview && (
-            <div className="flex justify-center items-center py-2.5 px-3 mx-auto mb-3 sm:mb-4 bg-gray-100 border border-gray-200 rounded-md">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="text-sm sm:text-base text-gray-800 font-medium">
-                Image successfully analyzed
-              </p>
+            <div className="flex justify-center items-center py-2 px-3 mx-auto mb-2 sm:mb-3 bg-gray-100 border border-gray-200 rounded-md">
+              <div className="flex items-center text-sm sm:text-base gap-1 sm:gap-2">
+                <div className="bg-gray-200 rounded-full p-0.5 sm:p-1 flex items-center justify-center">
+                  <Check className="h-3 w-3 sm:h-4 sm:w-4 text-gray-700" />
+                </div>
+                <p className="text-xs sm:text-sm text-gray-800 font-medium">
+                  Image successfully analyzed
+                </p>
+              </div>
             </div>
           )}
           <ResultHeader result={result} />

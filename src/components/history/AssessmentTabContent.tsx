@@ -5,6 +5,7 @@ import AssessmentCard from './AssessmentCard';
 import EmptyHistoryCard from './EmptyHistoryCard';
 import { formatDate, formatTime } from '@/utils/dateFormatUtils';
 import { getLikelihoodBadge } from './LikelihoodBadgeUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AssessmentTabContentProps {
   assessments: AssessmentRecord[];
@@ -17,8 +18,10 @@ const AssessmentTabContent: React.FC<AssessmentTabContentProps> = ({
   likelihood, 
   onViewDetails 
 }) => {
+  const isMobile = useIsMobile();
   console.log('AssessmentTabContent received assessments:', assessments);
   console.log('Filtering by likelihood:', likelihood);
+  console.log('Is mobile view:', isMobile);
   
   // Filter assessments by likelihood if specified
   const filteredAssessments = likelihood 
@@ -32,7 +35,7 @@ const AssessmentTabContent: React.FC<AssessmentTabContentProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 animate-fade-in">
       {filteredAssessments.map((assessment) => (
         <AssessmentCard 
           key={assessment.id} 

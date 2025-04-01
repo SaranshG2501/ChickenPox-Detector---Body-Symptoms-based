@@ -18,6 +18,7 @@ import {
   Clock, 
   Eye 
 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export interface AssessmentRecord {
   id: string;
@@ -48,7 +49,9 @@ const AssessmentCard = ({
   formatTime,
   getLikelihoodBadge
 }: AssessmentCardProps) => {
+  const isMobile = useIsMobile();
   console.log('Rendering AssessmentCard with data:', assessment);
+  console.log('Is mobile view:', isMobile);
   
   // Handle potentially missing data with defaults
   const {
@@ -63,25 +66,25 @@ const AssessmentCard = ({
 
   return (
     <Card className="overflow-hidden transition-all hover:shadow-md hover:translate-y-[-2px] h-full flex flex-col">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start flex-wrap gap-2">
+      <CardHeader className="pb-2 sm:pb-3">
+        <div className="flex justify-between items-start flex-wrap gap-1 sm:gap-2">
           <div>
-            <CardTitle className="text-base sm:text-lg">Assessment Report</CardTitle>
-            <CardDescription className="flex flex-wrap items-center mt-1 gap-1 text-xs sm:text-sm">
-              <CalendarIcon className="h-3 w-3 sm:h-4 sm:w-4" />
+            <CardTitle className="text-sm sm:text-base">Assessment Report</CardTitle>
+            <CardDescription className="flex flex-wrap items-center mt-0.5 sm:mt-1 gap-0.5 sm:gap-1 text-xs">
+              <CalendarIcon className="h-3 w-3" />
               {formatDate(assessmentDate)}
-              <span className="mx-1">•</span>
-              <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="mx-0.5 sm:mx-1">•</span>
+              <Clock className="h-3 w-3" />
               {formatTime(assessmentDate)}
             </CardDescription>
           </div>
           {getLikelihoodBadge(analysis.likelihood)}
         </div>
       </CardHeader>
-      <CardContent className="pb-4 flex-grow">
-        <div className="flex gap-3 sm:gap-4">
+      <CardContent className="pb-2 sm:pb-4 flex-grow">
+        <div className="flex gap-2 sm:gap-4">
           {imageUrl && (
-            <div className="shrink-0 w-16 h-16 sm:w-24 sm:h-24 rounded overflow-hidden border">
+            <div className="shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded overflow-hidden border">
               <img 
                 src={imageUrl} 
                 alt="Skin condition" 
@@ -90,32 +93,32 @@ const AssessmentCard = ({
             </div>
           )}
           <div>
-            <h4 className="font-medium mb-1 text-sm sm:text-base">Key Factors:</h4>
-            <ul className="list-disc pl-5 text-xs sm:text-sm space-y-0.5">
+            <h4 className="font-medium mb-0.5 sm:mb-1 text-xs sm:text-sm">Key Factors:</h4>
+            <ul className="list-disc pl-4 sm:pl-5 text-xs space-y-0.5">
               {reasons.length > 0 ? (
                 <>
                   {reasons.slice(0, 2).map((reason, idx) => (
-                    <li key={idx} className="line-clamp-2">{reason}</li>
+                    <li key={idx} className="line-clamp-2 text-[11px] sm:text-xs">{reason}</li>
                   ))}
                   {reasons.length > 2 && (
-                    <li className="text-gray-500">+ {reasons.length - 2} more factors</li>
+                    <li className="text-gray-500 text-[10px] sm:text-xs">+ {reasons.length - 2} more factors</li>
                   )}
                 </>
               ) : (
-                <li>No specific factors recorded</li>
+                <li className="text-[11px] sm:text-xs">No specific factors recorded</li>
               )}
             </ul>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 justify-end mt-auto pt-3 pb-3">
+      <CardFooter className="bg-gray-50 justify-end mt-auto pt-2 pb-2 sm:py-3">
         <Button 
           variant="outline" 
           size="sm" 
-          className="text-xs sm:text-sm w-full sm:w-auto flex justify-center items-center" 
+          className="text-[11px] sm:text-xs w-full sm:w-auto flex justify-center items-center h-7 sm:h-8" 
           onClick={() => onViewDetails(id)}
         >
-          <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
+          <Eye className="h-3 w-3 mr-1" />
           View Details
         </Button>
       </CardFooter>
