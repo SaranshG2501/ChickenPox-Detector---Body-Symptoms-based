@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import ImageUpload from "@/components/ImageUpload";
 import SymptomsQuestionnaire, { QuestionnaireResults } from "@/components/SymptomsQuestionnaire";
@@ -18,7 +17,7 @@ enum ScreenState {
 }
 
 const Index = () => {
-  const { currentUser } = useAuth();
+  const { currentUser  } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [currentScreen, setCurrentScreen] = useState<ScreenState>(ScreenState.UPLOAD);
@@ -97,20 +96,20 @@ const Index = () => {
                 <span className="text-gray-800">Chicken Pox</span> <span className="text-gray-600">Assessment</span>
               </h1>
               <div className="flex items-center gap-2">
-              <Button 
-  variant="outline" 
-  size="sm" 
-  onClick={() => navigate('/history')}
-  className={`flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors h-8 sm:h-9 w-32 ${isMobile ? 'px-2' : 'px-3'}`}
->
-  <History className="h-4 w-4 mr-0 sm:mr-2" />
-  <span className={isMobile ? "sr-only sm:inline" : ""}>History</span>
-</Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate('/history')}
+                  className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors h-8 w-32"
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">History</span>
+                </Button>
                 <LogoutButton />
               </div>
             </div>
             <p className="mt-2 sm:mt-3 text-gray-800 text-center font-semibold text-base sm:text-xl px-1 sm:px-2">
-              Welcome, <span>{currentUser?.displayName}</span>!
+              Welcome, <span>{currentUser ?.displayName}</span>!
             </p>
             <p className="mt-1 sm:mt-2 text-gray-600 text-center text-xs sm:text-base">
               Upload an image of the affected area and answer a few questions for a preliminary assessment.

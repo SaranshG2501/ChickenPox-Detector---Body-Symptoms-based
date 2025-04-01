@@ -23,11 +23,11 @@ const LogoutButton = () => {
       variant="outline"
       size="sm"
       onClick={handleLogout}
-      className={`flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors h-8 sm:h-9 ${isMobile ? 'px-2' : 'px-3'}`}
+      className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors h-8 w-32"
     >
-      <LogOut className={`h-4 w-4 ${!isMobile ? 'mr-0 sm:mr-2' : ''}`} />
-      {!isMobile && <span className=" sm:inline">Logout</span>}
-      {isMobile && <span className="sr-only">Logout</span>}
+      <LogOut className="h-4 w-4 mr-2" />
+      <span className="hidden sm:inline">Logout</span>
+      <span className="sr-only sm:hidden">Logout</span>
     </Button>
   );
 };
