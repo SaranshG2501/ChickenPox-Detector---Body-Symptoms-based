@@ -92,7 +92,7 @@ import { useState } from "react";
          <div className="bg-white shadow-lg rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-200">
              <div className="flex items-center justify-between flex-wrap gap-2">
                <h1 className="text-xl sm:text-4xl font-medium text-gray-800">
-                 <span className="text-gray-800">Chicken Pox</span> <span className="text-gray-600">Symptoms Assessment</span>
+                 <span className="text-gray-800">Chicken Pox</span> <span className="text-gray-600">Assessment</span>
                </h1>
                <div className="flex items-center gap-2">
                  <Button 
