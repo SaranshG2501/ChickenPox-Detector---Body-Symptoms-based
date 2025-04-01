@@ -1,28 +1,31 @@
-import { useAuth } from "@/contexts/AuthContext"; // Import useAuth from your context
-import { toast } from "sonner"; // Import toast for notifications
-import { Button } from "@/components/ui/button"; // Import your Button component
+
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 const LogoutButton = () => {
-  const { logout } = useAuth(); // Get the logout function from the auth context
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      await logout(); // Call the logout function
-      toast.success("Logged out successfully!"); // Show success message
+      await logout();
+      toast.success("Logged out successfully!");
     } catch (error) {
-      console.error("Logout error:", error); // Log any errors
-      toast.error("Failed to log out. Please try again."); // Show error message
+      console.error("Logout error:", error);
+      toast.error("Failed to log out. Please try again.");
     }
   };
 
   return (
     <Button
-      variant="outline" // Use the outline variant to match the theme
-      size="sm" // Use a small size for consistency
-      onClick={handleLogout} // Call handleLogout on click
-      className="flex text-gray-800 hover:text-black border-gray-600 hover:bg-gray-200" // Update colors to match the theme
+      variant="outline"
+      size="sm"
+      onClick={handleLogout}
+      className="flex text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors"
     >
-      Logout
+      <LogOut className="h-4 w-4 mr-1.5 sm:mr-2" />
+      <span className="hidden sm:inline">Logout</span>
     </Button>
   );
 };

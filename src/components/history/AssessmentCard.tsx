@@ -62,26 +62,26 @@ const AssessmentCard = ({
   const reasons = Array.isArray(analysis.reasons) ? analysis.reasons : [];
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden transition-all hover:shadow-md hover:translate-y-[-2px] h-full flex flex-col">
       <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start flex-wrap gap-2">
           <div>
-            <CardTitle className="text-lg">Assessment Report</CardTitle>
-            <CardDescription className="flex items-center mt-1">
-              <CalendarIcon className="h-4 w-4 mr-1" />
+            <CardTitle className="text-base sm:text-lg">Assessment Report</CardTitle>
+            <CardDescription className="flex flex-wrap items-center mt-1 gap-1 text-xs sm:text-sm">
+              <CalendarIcon className="h-3 w-3 sm:h-4 sm:w-4" />
               {formatDate(assessmentDate)}
               <span className="mx-1">•</span>
-              <Clock className="h-4 w-4 mr-1" />
+              <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
               {formatTime(assessmentDate)}
             </CardDescription>
           </div>
           {getLikelihoodBadge(analysis.likelihood)}
         </div>
       </CardHeader>
-      <CardContent className="pb-4">
-        <div className="flex gap-4">
+      <CardContent className="pb-4 flex-grow">
+        <div className="flex gap-3 sm:gap-4">
           {imageUrl && (
-            <div className="shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded overflow-hidden border">
+            <div className="shrink-0 w-16 h-16 sm:w-24 sm:h-24 rounded overflow-hidden border">
               <img 
                 src={imageUrl} 
                 alt="Skin condition" 
@@ -90,15 +90,15 @@ const AssessmentCard = ({
             </div>
           )}
           <div>
-            <h4 className="font-medium mb-1">Key Factors:</h4>
-            <ul className="list-disc pl-5 text-sm space-y-0.5">
+            <h4 className="font-medium mb-1 text-sm sm:text-base">Key Factors:</h4>
+            <ul className="list-disc pl-5 text-xs sm:text-sm space-y-0.5">
               {reasons.length > 0 ? (
                 <>
-                  {reasons.slice(0, 3).map((reason, idx) => (
-                    <li key={idx}>{reason}</li>
+                  {reasons.slice(0, 2).map((reason, idx) => (
+                    <li key={idx} className="line-clamp-2">{reason}</li>
                   ))}
-                  {reasons.length > 3 && (
-                    <li className="text-gray-500">+ {reasons.length - 3} more factors</li>
+                  {reasons.length > 2 && (
+                    <li className="text-gray-500">+ {reasons.length - 2} more factors</li>
                   )}
                 </>
               ) : (
@@ -108,17 +108,17 @@ const AssessmentCard = ({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 flex justify-end">
-  <Button 
-    variant="outline" 
-    size= "sm" 
-    className="mt-5" // Add margin-bottom to create space
-    onClick={() => onViewDetails(id)}
-  >
-    <Eye className="h-5 w-4 mr-1" />
-    View Details
-  </Button>
-</CardFooter>
+      <CardFooter className="bg-gray-50 justify-end mt-auto pt-3 pb-3">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="text-xs sm:text-sm w-full sm:w-auto flex justify-center items-center" 
+          onClick={() => onViewDetails(id)}
+        >
+          <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
+          View Details
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

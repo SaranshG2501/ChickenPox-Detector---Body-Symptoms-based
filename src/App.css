@@ -88,4 +88,94 @@ input, button, select, textarea {
   .hide-on-mobile {
     display: none;
   }
+  
+  .text-sm {
+    font-size: 0.875rem !important;
+  }
+  
+  .text-xs {
+    font-size: 0.75rem !important;
+  }
+  
+  h1, h2, h3, h4 {
+    word-break: break-word;
+  }
+  
+  .mobile-p-smaller {
+    padding: 0.5rem !important;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+  }
+  
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+  
+  .mobile-text-center {
+    text-align: center !important;
+  }
+  
+  .mobile-mt-2 {
+    margin-top: 0.5rem !important;
+  }
+  
+  .mobile-height-auto {
+    height: auto !important;
+  }
+}
+
+/* Responsive gap classes */
+.gap-responsive {
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .gap-responsive {
+    gap: 1rem;
+  }
+}
+
+/* Touch-friendly elements for mobile */
+@media (max-width: 640px) {
+  button, a, .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .card, .glass {
+    padding: 1rem;
+  }
+}
+
+/* Loading animations */
+@keyframes pulse-animation {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.loading-pulse {
+  animation: pulse-animation 1.5s infinite ease-in-out;
+}
+
+/* Improved scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }

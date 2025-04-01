@@ -108,12 +108,12 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
       ) : (
         <Card className={`w-full border-2 mb-4 sm:mb-6 shadow-md ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
           {imageLoaded && imagePreview && (
-            <div className="flex justify-center py-2 px-3 mx-auto mb-2 sm:mb-3 bg-gray-100 rounded-md border border-gray-300 max-w-xs sm:max-w-sm lg:max-w-md">
-              <p className="text-xs sm:text-sm text-gray-800 flex items-center font-medium">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                Image analyzed successfully
+            <div className="flex justify-center items-center py-2.5 px-3 mx-auto mb-3 sm:mb-4 bg-gray-100 border border-gray-200 rounded-md">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <p className="text-sm sm:text-base text-gray-800 font-medium">
+                Image successfully analyzed
               </p>
             </div>
           )}
