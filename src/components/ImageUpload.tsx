@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -91,10 +92,10 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
   };
 
   return (
-    <Card className="w-full overflow-hidden animate-fade-in">
-      <CardContent className="p-6">
+    <Card className="w-full overflow-hidden animate-fade-in shadow-md">
+      <CardContent className="p-4 sm:p-6">
         <div
-          className={`upload-area relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg transition-all
+          className={`upload-area relative flex flex-col items-center justify-center p-4 sm:p-8 border-2 border-dashed rounded-lg transition-all
             ${isDragging ? 'border-black bg-green-100' : 'border-gray-200 hover:border-gray-400'}
             ${preview ? 'border-opacity-0' : 'border-opacity-100'}
           `}
@@ -112,12 +113,12 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
               <img 
                 src={preview} 
                 alt="Preview" 
-                className="w-full max-h-96 object-contain rounded-md animate-fade-in" 
+                className="w-full h-auto max-h-64 sm:max-h-96 object-contain rounded-md animate-fade-in" 
               />
               <Button 
                 variant="secondary" 
                 size="icon" 
-                className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+                className="absolute top-2 right-2 bg-white/80 hover:bg-white shadow-sm"
                 onClick={clearImage}
               >
                 <X className="h-4 w-4" />
@@ -125,28 +126,28 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
             </div>
           ) : (
             <>
-              <div className="mb-5 p-5 bg-gray-100 text-black rounded-full shadow-lg"> {/* Added shadow-lg */}
-                <Upload className="h-8 w-8" />
+              <div className="mb-4 sm:mb-5 p-4 sm:p-5 bg-gray-100 text-gray-700 rounded-full shadow-lg"> 
+                <Upload className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="mb-2 text-lg font-medium text-gray-800">Upload Skin Image</h3>
-              <p className="mb-6 text-sm text-center text-gray-500 max-w-xs">
-                Drag and drop your image here, or click to select a file
+              <h3 className="mb-2 text-base sm:text-lg font-medium text-gray-800">Upload Skin Image</h3>
+              <p className="mb-4 sm:mb-6 text-xs sm:text-sm text-center text-gray-500 max-w-xs px-2">
+                Drag and drop your image here, or use the buttons below
               </p>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <Button 
-                  className="button-hover-effect text-lg px-4 py-3"
+                  className="w-full sm:w-auto button-hover-effect px-4 py-2 sm:py-3 text-sm sm:text-base"
                   onClick={handleUploadClick}
                 >
-                  <Upload className="h-4 w-4" />
-                  Upload
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Image
                 </Button>
                 <Button 
-  className="button-hover-effect text-lg px-4 py-3" // Increased padding and font size
-  onClick={handleCaptureClick}
->
-  <Camera className=" h-5 w-5" /> {/* Increased icon size */}
-  Take Photo
-</Button>
+                  className="w-full sm:w-auto button-hover-effect px-4 py-2 sm:py-3 text-sm sm:text-base mt-2 sm:mt-0" 
+                  onClick={handleCaptureClick}
+                >
+                  <Camera className="h-4 w-4 mr-2" />
+                  Take Photo
+                </Button>
               </div>
             </>
           )}
