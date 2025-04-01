@@ -11,7 +11,7 @@ import ResultActions from './results/ResultActions';
 import DisclaimerComponent from './results/DisclaimerComponent';
 import { handleSaveAssessment } from './results/SaveResultHandler';
 import { analyzeImageWithRoboflow, RoboflowResponse } from '../services/roboflowService';
-import { Check } from 'lucide-react';
+import { Check, AlertCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResultDisplayProps {
@@ -49,11 +49,17 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
         // Analyze image with Roboflow API
         const analysis = await analyzeImageWithRoboflow(imagePreview);
         setImageAnalysisResults(analysis);
-        setImageLoaded(true);
         
-        // Show message that image is loaded
-        toast.success("Image analysis complete!");
-        console.log("Image analysis complete:", analysis);
+        // Check if we got an error response (API failure)
+        if (analysis.inference_id === "error") {
+          setAnalyzeError(true);
+          toast.error("There was an error analyzing your image. Results will be based only on your symptoms.");
+          console.log("API error detected, using symptom-based assessment only");
+        } else {
+          setImageLoaded(true);
+          toast.success("Image analysis complete!");
+          console.log("Image analysis complete:", analysis);
+        }
       } catch (error) {
         console.error("Error analyzing image:", error);
         setAnalyzeError(true);
@@ -110,7 +116,7 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
         </Card>
       ) : (
         <Card className={`w-full border-2 mb-3 sm:mb-6 shadow-md ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
-          {imageLoaded && imagePreview && (
+          {imageLoaded && imagePreview && !analyzeError && (
             <div className="flex justify-center items-center py-2 px-3 mx-auto mb-2 sm:mb-3 bg-gray-100 border border-gray-200 rounded-md">
               <div className="flex items-center text-sm sm:text-base gap-1 sm:gap-2">
                 <div className="bg-gray-200 rounded-full p-0.5 sm:p-1 flex items-center justify-center">
@@ -122,11 +128,26 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
               </div>
             </div>
           )}
+          
+          {analyzeError && imagePreview && (
+            <div className="flex justify-center items-center py-2 px-3 mx-auto mb-2 sm:mb-3 bg-red-50 border border-red-200 rounded-md">
+              <div className="flex items-center text-sm sm:text-base gap-1 sm:gap-2">
+                <div className="bg-red-100 rounded-full p-0.5 sm:p-1 flex items-center justify-center">
+                  <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
+                </div>
+                <p className="text-xs sm:text-sm text-red-800 font-medium">
+                  Image analysis failed. Using symptoms only.
+                </p>
+              </div>
+            </div>
+          )}
+          
           <ResultHeader result={result} />
           <ResultContent 
             result={result} 
             imagePreview={imagePreview} 
             imageAnalysisResults={imageAnalysisResults}
+            analyzeError={analyzeError}
           />
           <ResultActions 
             onRestart={onRestart} 

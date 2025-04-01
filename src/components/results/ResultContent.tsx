@@ -8,9 +8,10 @@ interface ResultContentProps {
   result: AnalysisResult;
   imagePreview: string | null;
   imageAnalysisResults?: RoboflowResponse | null;
+  analyzeError?: boolean;
 }
 
-const ResultContent = ({ result, imagePreview, imageAnalysisResults }: ResultContentProps) => {
+const ResultContent = ({ result, imagePreview, imageAnalysisResults, analyzeError = false }: ResultContentProps) => {
   return (
     <CardContent className="pb-2">
       <div className="space-y-4">
@@ -22,7 +23,16 @@ const ResultContent = ({ result, imagePreview, imageAnalysisResults }: ResultCon
               </svg>
               Image Analysis Results
             </h3>
-            {result.aiConfidence !== undefined ? (
+            {analyzeError ? (
+              <div className="mb-2">
+                <p className="text-sm text-red-700 mb-1">
+                  Image analysis failed. Assessment based on symptoms only.
+                </p>
+                <div className="text-xs text-gray-600">
+                  This may be due to API limitations or configuration issues.
+                </div>
+              </div>
+            ) : result.aiConfidence !== undefined ? (
               <div className="mb-2">
                 <div className="flex justify-between mb-1">
                   <span className="text-sm font-medium">Chickenpox confidence:</span>
@@ -40,7 +50,7 @@ const ResultContent = ({ result, imagePreview, imageAnalysisResults }: ResultCon
               </p>
             )}
             
-            {imageAnalysisResults && imageAnalysisResults.predictions && (
+            {!analyzeError && imageAnalysisResults && imageAnalysisResults.predictions && (
               <div className="mt-3">
                 <h4 className="text-sm font-medium mb-1">AI Detection Details:</h4>
                 {imageAnalysisResults.predictions.length > 0 ? (
@@ -82,7 +92,9 @@ const ResultContent = ({ result, imagePreview, imageAnalysisResults }: ResultCon
             ) : (
               <p className="text-sm">
                 {imagePreview 
-                  ? "No alternative conditions were detected in your image."
+                  ? analyzeError
+                    ? "Image analysis failed. No alternative conditions could be detected."
+                    : "No alternative conditions were detected in your image."
                   : "No image was provided for alternative condition analysis."}
               </p>
             )}
@@ -91,8 +103,9 @@ const ResultContent = ({ result, imagePreview, imageAnalysisResults }: ResultCon
               <p className="text-sm font-medium mb-1">Assessment based on:</p>
               <ul className="text-sm list-disc pl-5">
                 <li>Symptom questionnaire</li>
-                {imagePreview && <li>Image analysis</li>}
-                {result.aiConfidence !== undefined && <li>AI model detection ({result.aiConfidence.toFixed(1)}% confidence)</li>}
+                {imagePreview && !analyzeError && <li>Image analysis</li>}
+                {imagePreview && analyzeError && <li>Image provided (analysis failed)</li>}
+                {result.aiConfidence !== undefined && !analyzeError && <li>AI model detection ({result.aiConfidence.toFixed(1)}% confidence)</li>}
               </ul>
             </div>
             
@@ -126,7 +139,7 @@ const ResultContent = ({ result, imagePreview, imageAnalysisResults }: ResultCon
                 className="w-full max-h-60 object-contain" 
               />
               
-              {imageAnalysisResults && imageAnalysisResults.predictions && imageAnalysisResults.predictions.length > 0 && (
+              {!analyzeError && imageAnalysisResults && imageAnalysisResults.predictions && imageAnalysisResults.predictions.length > 0 && (
                 <div className="absolute inset-0">
                   {imageAnalysisResults.predictions.map((pred, idx) => {
                     if (pred.x && pred.y && pred.width && pred.height) {

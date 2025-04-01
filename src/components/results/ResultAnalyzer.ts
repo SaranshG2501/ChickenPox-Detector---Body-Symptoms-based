@@ -1,3 +1,4 @@
+
 import { QuestionnaireResults } from '../SymptomsQuestionnaire';
 import { AnalysisResult } from './AnalysisResult';
 import { RoboflowResponse } from '../../services/roboflowService';
@@ -8,8 +9,10 @@ export function analyzeResults(
 ): AnalysisResult {
   let score = 0;
   const reasons: string[] = [];
+  let aiConfidence: number | undefined = undefined;
   
-  if (imageAnalysis && imageAnalysis.predictions && imageAnalysis.predictions.length > 0) {
+  // Only try to use image analysis if it doesn't have an error id
+  if (imageAnalysis && imageAnalysis.predictions && imageAnalysis.predictions.length > 0 && imageAnalysis.inference_id !== "error") {
     const chickenpoxPredictions = imageAnalysis.predictions.filter(
       pred => pred.class.toLowerCase().includes('chicken') || 
              pred.class.toLowerCase().includes('pox')
@@ -17,6 +20,7 @@ export function analyzeResults(
     
     if (chickenpoxPredictions.length > 0) {
       const maxConfidence = Math.max(...chickenpoxPredictions.map(pred => pred.confidence));
+      aiConfidence = maxConfidence * 100;
       
       if (maxConfidence > 0.7) {
         score += 5;
@@ -123,19 +127,10 @@ export function analyzeResults(
   
   let likelihood: 'high' | 'medium' | 'low' | 'unknown' = 'unknown';
   let advice = '';
-  let aiConfidence: number | null = null;
   let alternativeDiagnoses: string[] = [];
   
-  if (imageAnalysis && imageAnalysis.predictions) {
-    const chickenpoxPredictions = imageAnalysis.predictions.filter(
-      pred => pred.class.toLowerCase().includes('chicken') || 
-              pred.class.toLowerCase().includes('pox')
-    );
-    
-    if (chickenpoxPredictions.length > 0) {
-      aiConfidence = Math.max(...chickenpoxPredictions.map(pred => pred.confidence)) * 100;
-    }
-    
+  // Only include alternative diagnoses if we have valid image analysis
+  if (imageAnalysis && imageAnalysis.predictions && imageAnalysis.inference_id !== "error") {
     alternativeDiagnoses = [...new Set(
       imageAnalysis.predictions
         .filter(pred => !(pred.class.toLowerCase().includes('chicken') || 
@@ -148,21 +143,21 @@ export function analyzeResults(
     likelihood = 'high';
     advice = "The symptoms you've described align strongly with chicken pox. We recommend consulting a healthcare provider as soon as possible for confirmation and treatment. Avoid contact with others, especially pregnant women, newborns, and immunocompromised individuals.";
     
-    if (aiConfidence !== null) {
+    if (aiConfidence !== undefined) {
       advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
     }
   } else if (score >= 6) {
     likelihood = 'medium';
     advice = "Your symptoms have some features consistent with chicken pox. We recommend consulting a healthcare provider for proper diagnosis and advice. In the meantime, avoid close contact with others and monitor for any changes in symptoms.";
     
-    if (aiConfidence !== null) {
+    if (aiConfidence !== undefined) {
       advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
     }
   } else if (score >= 0) {
     likelihood = 'low';
     advice = "Your symptoms have few features typically associated with chicken pox, but a healthcare provider should evaluate any rash or concerning symptoms.";
     
-    if (aiConfidence !== null) {
+    if (aiConfidence !== undefined) {
       advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
     }
     
@@ -175,7 +170,7 @@ export function analyzeResults(
     likelihood = 'unknown';
     advice = "Based on the information provided, we cannot determine if chicken pox is likely.";
     
-    if (aiConfidence !== null) {
+    if (aiConfidence !== undefined) {
       advice += ` Our AI analysis shows ${aiConfidence.toFixed(1)}% confidence that the rash in your image is chickenpox.`;
     }
     
@@ -191,7 +186,7 @@ export function analyzeResults(
     score, 
     reasons, 
     advice, 
-    aiConfidence: aiConfidence !== null ? aiConfidence : undefined,
+    aiConfidence,
     alternativeDiagnoses: alternativeDiagnoses.length > 0 ? alternativeDiagnoses : undefined
   };
 }
