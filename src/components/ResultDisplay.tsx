@@ -53,7 +53,6 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
         // Check if we got an error response (API failure)
         if (analysis.inference_id === "error") {
           setAnalyzeError(true);
-          toast.error("There was an error analyzing your image. Results will be based only on your symptoms.");
           console.log("API error detected, using symptom-based assessment only");
         } else {
           setImageLoaded(true);
@@ -63,7 +62,6 @@ const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDi
       } catch (error) {
         console.error("Error analyzing image:", error);
         setAnalyzeError(true);
-        toast.error("There was an error analyzing your image. Results will be based only on your symptoms.");
       } finally {
         setIsAnalyzing(false);
       }
