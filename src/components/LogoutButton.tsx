@@ -21,14 +21,14 @@ const LogoutButton = () => {
 
   return (
     <Button
-      variant="outline"
-      size={isMobile ? "icon" : "sm"}
+      variant="outline" 
+      size={isMobile ? "sm" : "sm"} 
       onClick={handleLogout}
-      className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors"
+      className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors w-full sm:w-auto"
       aria-label="Logout"
     >
-      <LogOut className="h-4 w-4" />
-      {!isMobile ? <span className="ml-2 hidden sm:inline">Logout</span> : null}
+      <LogOut className="h-4 w-4 mr-2" />
+      <span className="hidden sm:inline">Logout</span>
     </Button>
   );
 };

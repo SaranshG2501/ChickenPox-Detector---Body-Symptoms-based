@@ -96,13 +96,13 @@ const Index = () => {
               <div className="flex items-center gap-3">
                 <Button 
                   variant="outline" 
-                  size={isMobile ? "icon" : "sm"} 
+                  size="sm" 
                   onClick={() => navigate('/history')}
-                  className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 h-9"
+                  className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 w-full sm:w-auto"
                   aria-label="History"
                 >
-                  <History className="h-4 w-4" />
-                  {!isMobile ? <span className="ml-2 hidden sm:inline">History</span> : null}
+                  <History className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">History</span>
                 </Button>
                 <LogoutButton />
               </div>
