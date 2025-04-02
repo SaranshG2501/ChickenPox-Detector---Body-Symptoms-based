@@ -22,13 +22,13 @@ const LogoutButton = () => {
   return (
     <Button
       variant="outline" 
-      size={isMobile ? "sm" : "sm"} 
+      size="sm"
       onClick={handleLogout}
-      className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors w-full sm:w-auto"
+      className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors"
       aria-label="Logout"
     >
       <LogOut className="h-4 w-4 mr-2" />
-      <span className="hidden sm:inline">Logout</span>
+      <span>Logout</span>
     </Button>
   );
 };

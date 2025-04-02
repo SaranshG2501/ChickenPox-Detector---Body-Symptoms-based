@@ -98,11 +98,11 @@ const Index = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => navigate('/history')}
-                  className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 w-full sm:w-auto"
+                  className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors"
                   aria-label="History"
                 >
                   <History className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">History</span>
+                  <span>History</span>
                 </Button>
                 <LogoutButton />
               </div>
