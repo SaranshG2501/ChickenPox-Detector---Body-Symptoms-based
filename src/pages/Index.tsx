@@ -69,6 +69,7 @@ const Index = () => {
           imagePreview={imagePreview}
           imageFile={uploadedImage}
           onRestart={handleRestart}
+          hideWelcomeMessage={true}
         />;
       default:
         return <ImageUpload onImageUploaded={handleImageUploaded} />;
@@ -89,7 +90,7 @@ const Index = () => {
       <header className="w-full py-4 sm:py-6 px-3 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white shadow-lg rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-200">
-            <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center justify-between">
               <h1 className="text-xl sm:text-4xl font-medium text-gray-800">
                 <span className="text-gray-800">Chicken Pox</span> <span className="text-gray-600">Assessment</span>
               </h1>
@@ -107,12 +108,16 @@ const Index = () => {
                 <LogoutButton />
               </div>
             </div>
-            <p className="mt-2 sm:mt-3 text-gray-800 text-center font-semibold text-base sm:text-xl px-1 sm:px-2">
-              Welcome, <span>{currentUser?.displayName}</span>!
-            </p>
-            <p className="mt-1 sm:mt-2 text-gray-600 text-center text-xs sm:text-base">
-              Upload an image of the affected area and answer a few questions for a preliminary assessment.
-            </p>
+            {currentScreen !== ScreenState.RESULTS && (
+              <>
+                <p className="mt-2 sm:mt-3 text-gray-800 text-center font-semibold text-base sm:text-xl px-1 sm:px-2">
+                  Welcome, <span>{currentUser?.displayName}</span>!
+                </p>
+                <p className="mt-1 sm:mt-2 text-gray-600 text-center text-xs sm:text-base">
+                  Upload an image of the affected area and answer a few questions for a preliminary assessment.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </header>

@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { QuestionnaireResults } from './SymptomsQuestionnaire';
 import { useState, useEffect } from 'react';
@@ -19,9 +18,16 @@ interface ResultDisplayProps {
   imagePreview: string | null;
   imageFile: File | null;
   onRestart: () => void;
+  hideWelcomeMessage?: boolean;
 }
 
-const ResultDisplay = ({ results, imagePreview, imageFile, onRestart }: ResultDisplayProps) => {
+const ResultDisplay = ({ 
+  results, 
+  imagePreview, 
+  imageFile, 
+  onRestart, 
+  hideWelcomeMessage = false 
+}: ResultDisplayProps) => {
   const { currentUser } = useAuth();
   const isMobile = useIsMobile();
   const [isSaving, setIsSaving] = useState(false);
