@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -27,8 +28,8 @@ const LogoutButton = () => {
       className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors"
       aria-label="Logout"
     >
-      <LogOut className="h-4 w-4 mr-2" />
-      <span>Logout</span>
+      <LogOut className="h-4 w-4" />
+      {!isMobile && <span>Logout</span>}
     </Button>
   );
 };

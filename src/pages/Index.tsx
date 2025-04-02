@@ -102,8 +102,8 @@ const Index = () => {
                   className="flex items-center justify-center text-gray-800 hover:text-black border-gray-300 hover:bg-gray-200 transition-colors"
                   aria-label="History"
                 >
-                  <History className="h-4 w-4 mr-2" />
-                  <span>History</span>
+                  <History className="h-4 w-4" />
+                  {!isMobile && <span>History</span>}
                 </Button>
                 <LogoutButton />
               </div>
