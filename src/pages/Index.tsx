@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import ImageUpload from "@/components/ImageUpload";
 import SymptomsQuestionnaire, { QuestionnaireResults } from "@/components/SymptomsQuestionnaire";
@@ -50,6 +51,10 @@ const Index = () => {
     toast("Analysis complete. Reviewing your results...");
   };
 
+  const handleBackToQuestionnaire = () => {
+    setCurrentScreen(ScreenState.QUESTIONNAIRE);
+  };
+
   const handleRestart = () => {
     setCurrentScreen(ScreenState.UPLOAD);
     setUploadedImage(null);
@@ -69,6 +74,7 @@ const Index = () => {
           imagePreview={imagePreview}
           imageFile={uploadedImage}
           onRestart={handleRestart}
+          onBackToQuestionnaire={handleBackToQuestionnaire}
           hideWelcomeMessage={true}
         />;
       default:

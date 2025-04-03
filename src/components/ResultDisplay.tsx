@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { QuestionnaireResults } from './SymptomsQuestionnaire';
 import { useState, useEffect } from 'react';
@@ -10,8 +11,9 @@ import ResultActions from './results/ResultActions';
 import DisclaimerComponent from './results/DisclaimerComponent';
 import { handleSaveAssessment } from './results/SaveResultHandler';
 import { analyzeImageWithRoboflow, RoboflowResponse } from '../services/roboflowService';
-import { Check, AlertCircle } from 'lucide-react';
+import { Check, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from "@/components/ui/button";
 
 interface ResultDisplayProps {
   results: QuestionnaireResults;
@@ -19,6 +21,7 @@ interface ResultDisplayProps {
   imageFile: File | null;
   onRestart: () => void;
   hideWelcomeMessage?: boolean;
+  onBackToQuestionnaire?: () => void;
 }
 
 const ResultDisplay = ({ 
@@ -26,7 +29,8 @@ const ResultDisplay = ({
   imagePreview, 
   imageFile, 
   onRestart, 
-  hideWelcomeMessage = false 
+  hideWelcomeMessage = false,
+  onBackToQuestionnaire
 }: ResultDisplayProps) => {
   const { currentUser } = useAuth();
   const isMobile = useIsMobile();
@@ -57,7 +61,7 @@ const ResultDisplay = ({
         setImageAnalysisResults(analysis);
         
         // Check if we got an error response (API failure)
-        if (analysis.inference_id === "error") {
+        if (analysis && analysis.hasOwnProperty('error')) {
           setAnalyzeError(true);
           console.log("API error detected, using symptom-based assessment only");
         } else {
@@ -120,6 +124,20 @@ const ResultDisplay = ({
         </Card>
       ) : (
         <Card className={`w-full border-2 mb-3 sm:mb-6 shadow-md ${result ? `bg-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-50 border-${result.likelihood === 'high' ? 'red' : result.likelihood === 'medium' ? 'amber' : result.likelihood === 'low' ? 'green' : 'blue'}-200` : ''}`}>
+          {!isSaved && onBackToQuestionnaire && (
+            <div className="flex justify-start items-center py-2 px-3 mx-auto mb-2 sm:mb-3">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onBackToQuestionnaire} 
+                className="text-gray-600 hover:text-gray-900 flex gap-1 items-center"
+              >
+                <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">Back to questionnaire</span>
+              </Button>
+            </div>
+          )}
+          
           {imageLoaded && imagePreview && !analyzeError && (
             <div className="flex justify-center items-center py-2 px-3 mx-auto mb-2 sm:mb-3 bg-gray-100 border border-gray-200 rounded-md">
               <div className="flex items-center text-sm sm:text-base gap-1 sm:gap-2">
